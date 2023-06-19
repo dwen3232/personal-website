@@ -2,26 +2,36 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+
+.pages {
+  perspective: 3000px;
+  
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+.paper-color {
+  background-color: #ECE6DA;
+}
+.flip-page {
+  transform-style: preserve-3d;
+  transform: rotateY(0deg);
+  transition: transform 1.0s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transform-origin: 0% 0%;
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.flip-page.is-flipped {
+  /* display: grid; */
+  transition: transform 1.0s perspective(1000px) cubic-bezier(0.645, 0.045, 0.355, 1);
+  transform: rotateY(-180deg);
+}
+
+.front {
+  /* transform: rotateY(0deg) translateZ(1px); */
+  transform: rotateY(0deg);
+  backface-visibility: hidden;
+}
+
+.back {
+  /* transform: rotateY(180deg) translateZ(1px); */
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
 }
