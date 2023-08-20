@@ -24,9 +24,11 @@ function Book(props: {
             <Page key={n}
                   num={n}
                   numFaces={numFaces}
+                  numPages={numPages}
                   front={props.faces[2 * n]} 
                   back={n + 1 < numFaces && props.faces[2 * n + 1]}
-
+                  currentPage={currentPage}
+                  setCurrentPage={setCurrentPage}
                   lock={animationLock}
                   setLock={setAnimationLock}
             />
@@ -41,29 +43,36 @@ function Book(props: {
 function Page(props: {
   num: number,
   numFaces: number,
+  numPages: number,
   front: React.ReactNode,
   back: React.ReactNode,
+  currentPage: number,
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>
   lock: boolean,
   setLock: React.Dispatch<React.SetStateAction<boolean>>
 }) {
   // If page isFlipped, page is on the left side, front hidden and back showing
-  const [isFlipped, setIsFlipped] = useState(false);
+  const isFlipped = props.num < props.currentPage;
+  // const [isFlipped, setIsFlipped] = useState(false);
   const frontRef = useRef<HTMLInputElement>(null);
   const backRef = useRef<HTMLInputElement>(null);
 
+  console.log(`Page ${props.num} isFlipped: ${isFlipped}`);
 
   const incrementPage = () => {
     console.log(`incrementPage`)
     if (!props.lock) {
       props.setLock(true);
-      setIsFlipped(true);
+      // setIsFlipped(true);
+      props.setCurrentPage((currentPage) => currentPage < props.numPages ? currentPage + 1 : currentPage)
     }
   }
   const decrementPage = () => {
     console.log(`decrementPage`)
     if (!props.lock) {
       props.setLock(true);
-      setIsFlipped(false);
+      // setIsFlipped(false);
+      props.setCurrentPage((currentPage) => currentPage > 0 ? currentPage - 1 : currentPage)
     }
   }
 
