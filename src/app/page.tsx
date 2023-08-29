@@ -34,23 +34,18 @@ function AnimationPage(props: {
 
 
 export default function Home() {
-  // const [currentPage, setCurrentPage] = useState(0);
-
-  // useEffect(() => {
-  //   setCurrentPage(1);
-  // }, [])
-
   return (
-    <main className="w-screen h-screen flex">
+    <main className="w-screen h-screen flex font-mono">
+      <Image src="/natural-wooden-background.jpg" alt="background" fill/>
       <Book
         faces={[
           <Intro key={0} text='Title'/>,
           // <Intro key={1} text='Page 1'/>,
           <WelcomePage key={1} faceKey={1} />,
-          <AnimationPage key={2} faceKey={2} />,
-          <AnimationPage key={3} faceKey={3} />,
-          <AnimationPage key={4} faceKey={4} />,
-          <AnimationPage key={5} faceKey={5} />,
+          <WelcomePage key={2} faceKey={2} />,
+          <WelcomePage key={3} faceKey={3} />,
+          <WelcomePage key={4} faceKey={4} />,
+          <WelcomePage key={5} faceKey={5} />,
         ]}
       />
       

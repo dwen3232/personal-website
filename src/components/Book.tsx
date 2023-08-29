@@ -73,7 +73,7 @@ function Book(props: {
   return (
     // <div className='bg-blue-400 h-[80vh] max-w-[80vw] aspect-[99/70] z-10 m-auto rounded-lg border-blue-200 border-2 p-3 shadow-lg'>
     // TODO: find the best way to size this
-    <div className='bg-blue-400  min-w-[80vw]  aspect-[99/70] z-10 m-auto rounded-lg border-blue-200 border-2 p-3 shadow-lg'>
+    <div className='bg-blue-400 min-w-[80vw] aspect-[99/70] z-10 m-auto rounded-lg p-3 shadow-2xl'>
         <div className='pages w-full h-full relative bg-transparent'>
           <ShowAnimationContext.Provider value={showAnimation}>
           {
