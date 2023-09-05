@@ -3,27 +3,18 @@
 @tailwind utilities;
 
 
+html {
+  font-size: 1.125vmin;
+}
+
 .pages {
   perspective: 2500px;
   
 }
 
-
 .front-page {
   backface-visibility: hidden;
   background-color: #f3f0df;
-  /* background-image: 
-    linear-gradient(
-     to right,
-      rgba(76, 53, 73, 0.10) 0%,
-      rgba(76, 53, 73, 0.05) 2%,
-      rgba(76, 53, 73, 0.00) 5%,
-      rgba(76, 53, 73, 0.00) 28%,
-      rgba(76, 53, 73, 0.00) 60%,
-      rgba(76, 53, 73, 0.10) 94%,
-      rgba(76, 53, 73, 0.05) 98%,
-      rgba(76, 53, 73, 0.03) 100%
-    ); */
 }
 
 .front-page-enter {

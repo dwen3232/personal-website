@@ -6,6 +6,7 @@ import Book, { ShowAnimationContext } from '@/components/Book';
 import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
 import { useContext, useEffect, useState } from 'react';
 import WelcomePage from '@/components/WelcomePage';
+import AboutMePage from '@/components/AboutMePage';
 
 
 function Intro(props: {
@@ -42,10 +43,8 @@ export default function Home() {
           <Intro key={0} text='Title'/>,
           // <Intro key={1} text='Page 1'/>,
           <WelcomePage key={1} faceKey={1} />,
-          <WelcomePage key={2} faceKey={2} />,
+          <AboutMePage key={2} faceKey={2} />,
           <WelcomePage key={3} faceKey={3} />,
-          <WelcomePage key={4} faceKey={4} />,
-          <WelcomePage key={5} faceKey={5} />,
         ]}
       />
       

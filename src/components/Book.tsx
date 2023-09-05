@@ -50,7 +50,7 @@ function Book(props: {
   }
 
   const updateShowAnimation = () => {
-    var newState = Array(numFaces).fill(false);
+    let newState = Array(numFaces).fill(false);
     if (2 * currentPage < numFaces) {
       newState[2 * currentPage] = true;
     }
@@ -73,7 +73,7 @@ function Book(props: {
   return (
     // <div className='bg-blue-400 h-[80vh] max-w-[80vw] aspect-[99/70] z-10 m-auto rounded-lg border-blue-200 border-2 p-3 shadow-lg'>
     // TODO: find the best way to size this
-    <div className='bg-blue-400 min-w-[80vw] aspect-[99/70] z-10 m-auto rounded-lg p-3 shadow-2xl'>
+    <div className='bg-blue-400 w-[95vmin] aspect-[99/70] z-10 m-auto rounded-lg p-3 shadow-2xl'>
         <div className='pages w-full h-full relative bg-transparent'>
           <ShowAnimationContext.Provider value={showAnimation}>
           {
@@ -150,7 +150,7 @@ function Page(props: {
       >
         <div 
           ref={backRef}
-          className={`back-page paper-color absolute w-1/2 h-full top-0 left-0 rounded-l-md shadow-md`}
+          className={`back-page absolute w-1/2 h-full top-0 left-0 rounded-l-md shadow-md`}
           style={{zIndex: props.num}} 
           onClick={decrementPage}
         >
