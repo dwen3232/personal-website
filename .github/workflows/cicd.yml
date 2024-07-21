@@ -6,6 +6,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    needs: [run-system-tests]
     if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
@@ -30,22 +31,5 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-rmodi
           aws-region: ${{ vars.AWS_REGION }}
-
-
-      # - name: Prepare GitHub environment variables
-      #   run: |
-      #     set -eux
-      #     # extract the repository name part
-      #     repo="${GITHUB_REPOSITORY#*/}"
-      #     # lowercase the name
-      #     repo="${repo,,}"
-      #     # replace / with _
-      #     echo "ECR_REPOSITORY=${repo//\//_}" >> $GITHUB_ENV
-      #     echo "COMMIT_HASH=${GITHUB_SHA}" >> $GITHUB_ENV
-      # # TODO: put in actual values for these
-      # - name: Login to Amazon ECR
-      #   id: login-ecr
-      #   uses: aws-actions/amazon-ecr-login@v1
-      #   with:
-      #     registries: ${{ secrets.AWS_ACCOUNT_ID }}
-      #     mask-password: "true"
+      - name: Deploy to S3
+        run: aws s3 sync ./out s3://${{ AWS_S3_NEXT_BUNDLE_NAME }}
