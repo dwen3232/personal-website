@@ -13,7 +13,7 @@ function WelcomePage(props: { faceKey: number }) {
 
   const headshotImage = (
     <div className="absolute left-[1.5%] top-[2%] h-[39%] w-[48%] rotate-1 rounded-sm bg-orange-100 p-[3%] drop-shadow-md">
-      <Image src="/headshot-photo.png" alt="sample" fill />
+      <Image unoptimized src="/headshot-photo.png" alt="sample" fill />
     </div>
   );
 
@@ -91,25 +91,25 @@ function WelcomePage(props: { faceKey: number }) {
 
   const skylineImage = (
     <div className="absolute left-[54%] top-[5%] h-[36.4%] w-[42%] -rotate-1 rounded-sm drop-shadow-md">
-      <Image src="/atlanta-skyline-photo.png" alt="sample" fill />
+      <Image unoptimized src="/atlanta-skyline-photo.png" alt="sample" fill />
     </div>
   );
 
   const beachImage = (
     <div className="absolute left-[45%] top-[55%] h-[38%] w-[45%] rotate-3 rounded-sm drop-shadow-md">
-      <Image src="/sea-shore-photo.png" alt="sample" fill />
+      <Image unoptimized src="/sea-shore-photo.png" alt="sample" fill />
     </div>
   );
 
   const macbookSticker = (
     <div className="absolute left-[53%] top-[30%] aspect-square w-[31%]">
-      <Image src="/macbook-sticker.png" alt="sample" fill />
+      <Image unoptimized src="/macbook-sticker.png" alt="sample" fill />
     </div>
   );
 
   const moneyplantSticker = (
     <div className="absolute left-[10%] top-[65%] aspect-square w-[30%]">
-      <Image src="/money-plant-sticker.png" alt="sample" fill />
+      <Image unoptimized src="/money-plant-sticker.png" alt="sample" fill />
     </div>
   );
 
