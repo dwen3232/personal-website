@@ -32,3 +32,7 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
       - name: Deploy to S3
         run: aws s3 sync ./out s3://${{ vars.AWS_S3_NEXT_BUNDLE_NAME }}
+      - name: Invalidate CloudFront
+        run: asws cloudfront create-invalidation \
+          --distribution-id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} \
+          --paths "/*"
