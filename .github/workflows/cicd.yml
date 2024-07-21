@@ -32,4 +32,4 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-rmodi
           aws-region: ${{ vars.AWS_REGION }}
       - name: Deploy to S3
-        run: aws s3 sync ./out s3://${{ AWS_S3_NEXT_BUNDLE_NAME }}
+        run: aws s3 sync ./out s3://${{ vars.AWS_S3_NEXT_BUNDLE_NAME }}
