@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
 import { ShowAnimationContext } from "./Book";
