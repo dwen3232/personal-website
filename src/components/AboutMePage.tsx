@@ -9,8 +9,6 @@ function AboutMePage(props: { faceKey: number }) {
 
   // TODO: refactor all these cards into some abstraction
 
-  //   - size: 340, 348 (57%, 41%)
-  // - left top: (3%, 28.4%)
   const aboutMeCard = (
     <div className="absolute left-[3%] top-[28.4%] flex h-[41%] w-[57%] flex-col rounded-sm bg-[#867D53] px-[5%] py-[06%] text-white drop-shadow-md">
       <span className="text-3xl">{"About Me"}</span>
@@ -25,8 +23,12 @@ function AboutMePage(props: { faceKey: number }) {
     </div>
   );
 
-  // - size: 182, 168 (30%, 20%)
-  // - left top: (6.5%,  4.5%)
+  const seashoreImage = (
+    <div className="absolute left-[54%] top-[5%] h-[36.4%] w-[42%] -rotate-1 rounded-sm drop-shadow-md">
+      <Image unoptimized src="/sea-shore-photo.jpg" alt="sample" fill />
+    </div>
+  );
+
   const chessSticker = (
     <div className="absolute left-[6%] top-[5%] aspect-square w-[30%]">
       <Image src="/chess-sticker.png" alt="sample" fill />
@@ -36,10 +38,10 @@ function AboutMePage(props: { faceKey: number }) {
   return (
     <div className="relative h-full w-full">
       {aboutMeCard}
+      {seashoreImage}
       {chessSticker}
     </div>
   );
 }
 
 export default AboutMePage;
-
