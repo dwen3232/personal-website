@@ -39,19 +39,29 @@ function WelcomePage(props: { faceKey: number }) {
 
         {/* // TODO: Make this all highlight at same time */}
         <span className="text-lg">
-          <RoughNotation type="highlight" color="Thistle" order={"2"}>
+          <RoughNotation
+            type="highlight"
+            color="Thistle"
+            padding={0}
+            order={"2"}
+          >
             machine learning
           </RoughNotation>{" "}
           engineer
         </span>
         <span className="text-lg">
-          <RoughNotation type="highlight" color="LightGreen" order={"2"}>
+          <RoughNotation
+            type="highlight"
+            color="LightGreen"
+            padding={0}
+            order={"2"}
+          >
             backend
           </RoughNotation>{" "}
           developer
         </span>
         <span className="text-lg">
-          <RoughNotation type="highlight" color="Gold" order={"2"}>
+          <RoughNotation type="highlight" color="Gold" padding={0} order={"2"}>
             math
           </RoughNotation>{" "}
           nerd
@@ -65,25 +75,25 @@ function WelcomePage(props: { faceKey: number }) {
       <RoughNotationGroup show={animation}>
         <span className="text-lg">
           {" - mle & swe at "}
-          <RoughNotation type="highlight" color="Thistle" padding={2}>
-            UKG
+          <RoughNotation type="highlight" color="Thistle" padding={0}>
+            {"UKG"}
           </RoughNotation>
         </span>
         <span className="text-lg">
           {" - "}
-          <RoughNotation type="highlight" color="LightGreen" padding={2}>
-            {"georgia tech "}
+          <RoughNotation type="highlight" color="LightGreen" padding={0}>
+            {"georgia tech"}
           </RoughNotation>
-          {"class of 2023"}
+          {" class of 2023"}
         </span>
         <span className="text-lg">
           {" - BS in "}
-          <RoughNotation type="highlight" color="Gold">
-            math
+          <RoughNotation type="highlight" color="Gold" padding={0}>
+            {"math"}
           </RoughNotation>
           {" and "}
-          <RoughNotation type="highlight" color="Gold">
-            cs
+          <RoughNotation type="highlight" color="Gold" padding={0}>
+            {"cs"}
           </RoughNotation>
         </span>
       </RoughNotationGroup>

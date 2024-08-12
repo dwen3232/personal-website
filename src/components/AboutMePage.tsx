@@ -1,9 +1,9 @@
 "use client";
 import Image from "next/image";
-import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
 import { ShowAnimationContext } from "./Book";
 import { useContext } from "react";
 import Link from "next/link";
+import { RoughNotation } from "react-rough-notation";
 
 function AboutMePage(props: { faceKey: number }) {
   const animation = useContext(ShowAnimationContext)[props.faceKey];
@@ -73,9 +73,23 @@ function AboutMePage(props: { faceKey: number }) {
   );
 
   const socialMediaLinks = (
-    <div className="absolute left-[5%] top-[90%] flex h-[5%] w-[20%] justify-between">
-      {linkedinIcon}
-      {githubIcon}
+    <div className="absolute left-[3%] top-[80%] flex h-[15%] w-[35%] -rotate-2 flex-col items-center justify-between rounded-sm bg-gray-50 px-4 py-6 drop-shadow-md">
+      <h1 className="text-xl text-sky-500">Check me out!</h1>
+      <div className="h-[50%] w-[90%]">
+        <RoughNotation
+          type="bracket"
+          brackets={["top", "bottom"]}
+          padding={5}
+          show={animation}
+          color="LightSkyBlue"
+          strokeWidth={2}
+        >
+          <div className="flex h-full w-full justify-between">
+            {linkedinIcon}
+            {githubIcon}
+          </div>
+        </RoughNotation>
+      </div>
     </div>
   );
 
