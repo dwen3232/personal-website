@@ -30,9 +30,7 @@ function WelcomePage(props: { faceKey: number }) {
             iterations={1}
             order={"1"}
           >
-            {/* <span className="text-3xl"> */}
             {"David"}
-            {/* </span> */}
           </RoughNotation>
         </h1>
         <br />
@@ -45,9 +43,9 @@ function WelcomePage(props: { faceKey: number }) {
             padding={0}
             order={"2"}
           >
-            machine learning
+            {"machine learning"}
           </RoughNotation>{" "}
-          engineer
+          <span>{"engineer"}</span>
         </span>
         <span className="text-lg">
           <RoughNotation
@@ -56,15 +54,15 @@ function WelcomePage(props: { faceKey: number }) {
             padding={0}
             order={"2"}
           >
-            backend
-          </RoughNotation>{" "}
-          developer
+            {"backend"}
+          </RoughNotation>
+          <span>{" developer"}</span>
         </span>
         <span className="text-lg">
           <RoughNotation type="highlight" color="Gold" padding={0} order={"2"}>
-            math
+            {"math"}
           </RoughNotation>{" "}
-          nerd
+          <span className="">{"nerd"}</span>
         </span>
       </RoughNotationGroup>
     </div>
@@ -74,24 +72,24 @@ function WelcomePage(props: { faceKey: number }) {
     <div className="absolute left-[07%] top-[40%] flex h-[28%] w-[45%] -rotate-1 flex-col rounded-sm bg-yellow-50 p-4 drop-shadow-md">
       <RoughNotationGroup show={animation}>
         <span className="text-lg">
-          {" - mle & swe at "}
+          <span>{" - mle & swe at "}</span>
           <RoughNotation type="highlight" color="Thistle" padding={0}>
             {"UKG"}
           </RoughNotation>
         </span>
         <span className="text-lg">
-          {" - "}
+          <span>{" - "}</span>
           <RoughNotation type="highlight" color="LightGreen" padding={0}>
             {"georgia tech"}
           </RoughNotation>
-          {" class of 2023"}
+          <span>{" class of 2023"}</span>
         </span>
         <span className="text-lg">
           {" - BS in "}
           <RoughNotation type="highlight" color="Gold" padding={0}>
             {"math"}
           </RoughNotation>
-          {" and "}
+          <span>{" and "}</span>
           <RoughNotation type="highlight" color="Gold" padding={0}>
             {"cs"}
           </RoughNotation>
@@ -118,6 +116,12 @@ function WelcomePage(props: { faceKey: number }) {
     </div>
   );
 
+  const flipPageButton = (
+    <div className="absolute left-[8%] top-[88%] aspect-[1.2] w-[12%] -scale-x-100">
+      <Image src="/drawn-arrow-icon.png" alt="Drawn Arrow" fill />
+    </div>
+  );
+
   return (
     <div className="relative h-full w-full">
       {pageCover}
@@ -127,6 +131,7 @@ function WelcomePage(props: { faceKey: number }) {
       {headshotImage}
       {macbookSticker}
       {moneyplantSticker}
+      {flipPageButton}
     </div>
   );
 }

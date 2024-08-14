@@ -74,7 +74,7 @@ function AboutMePage(props: { faceKey: number }) {
 
   const socialMediaLinks = (
     <div className="absolute left-[3%] top-[80%] flex h-[15%] w-[35%] -rotate-2 flex-col items-center justify-between rounded-sm bg-gray-50 px-4 py-6 drop-shadow-md">
-      <h1 className="text-xl text-sky-500">Check me out!</h1>
+      <span className="text-xl text-sky-500">Check me out!</span>
       <div className="h-[50%] w-[90%]">
         <RoughNotation
           type="bracket"
@@ -93,6 +93,12 @@ function AboutMePage(props: { faceKey: number }) {
     </div>
   );
 
+  const flipPageButton = (
+    <div className="absolute left-[77%] top-[88%] aspect-[1.2] w-[12%]">
+      <Image src="/drawn-arrow-icon.png" alt="Drawn Arrow" fill />
+    </div>
+  );
+
   return (
     <div className="relative h-full w-full">
       {pageCover}
@@ -100,6 +106,7 @@ function AboutMePage(props: { faceKey: number }) {
       {seashoreImage}
       {chessSticker}
       {socialMediaLinks}
+      {flipPageButton}
     </div>
   );
 }
