@@ -1,11 +1,11 @@
 "use client";
+
 import Image from "next/image";
 import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
-import { ShowAnimationContext } from "./Book";
-import { useContext } from "react";
+import { useCurrentAnimation } from "./Book";
 
 function WelcomePage(props: { faceKey: number }) {
-  const animation = useContext(ShowAnimationContext)[props.faceKey];
+  const animation = useCurrentAnimation(props.faceKey);
 
   // TODO: refactor all these cards into some abstraction
   const pageCover = (

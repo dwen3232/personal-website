@@ -1,12 +1,12 @@
 "use client";
+
 import Image from "next/image";
-import { ShowAnimationContext } from "./Book";
-import { useContext } from "react";
 import Link from "next/link";
 import { RoughNotation } from "react-rough-notation";
+import { useCurrentAnimation } from "./Book";
 
 function AboutMePage(props: { faceKey: number }) {
-  const animation = useContext(ShowAnimationContext)[props.faceKey];
+  const animation = useCurrentAnimation(props.faceKey);
 
   // TODO: refactor all these cards into some abstraction
 
