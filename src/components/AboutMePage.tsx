@@ -3,10 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { RoughNotation } from "react-rough-notation";
-import { useCurrentAnimation } from "./Book";
+import { useBookContext } from "./Book";
 
 function AboutMePage(props: { faceKey: number }) {
-  const animation = useCurrentAnimation(props.faceKey);
+  const { isFaceVisible, incrementPage } = useBookContext();
+  const animation = isFaceVisible(props.faceKey);
 
   // TODO: refactor all these cards into some abstraction
 
@@ -95,7 +96,7 @@ function AboutMePage(props: { faceKey: number }) {
 
   const flipPageButton = (
     <div className="absolute left-[77%] top-[88%] aspect-[1.2] w-[12%]">
-      <Image src="/drawn-arrow-icon.png" alt="Drawn Arrow" fill />
+      <Image src="/drawn-arrow-icon.png" alt="Drawn Arrow" onClick={incrementPage} fill />
     </div>
   );
 

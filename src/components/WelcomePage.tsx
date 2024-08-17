@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
-import { useCurrentAnimation } from "./Book";
+import { useBookContext } from "./Book";
 
 function WelcomePage(props: { faceKey: number }) {
-  const animation = useCurrentAnimation(props.faceKey);
+  const { isFaceVisible, decrementPage } = useBookContext();
+  const animation = isFaceVisible(props.faceKey);
 
   // TODO: refactor all these cards into some abstraction
   const pageCover = (
@@ -118,7 +119,12 @@ function WelcomePage(props: { faceKey: number }) {
 
   const flipPageButton = (
     <div className="absolute left-[8%] top-[88%] aspect-[1.2] w-[12%] -scale-x-100">
-      <Image src="/drawn-arrow-icon.png" alt="Drawn Arrow" fill />
+      <Image
+        src="/drawn-arrow-icon.png"
+        alt="Drawn Arrow"
+        onClick={decrementPage}
+        fill
+      />
     </div>
   );
 

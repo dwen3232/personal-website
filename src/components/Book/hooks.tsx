@@ -1,11 +1,8 @@
-"use client";
-
 import { useContext } from "react";
-import ShowAnimationContext from "./context";
+import { BookStateContext } from "./context";
 
-function useCurrentAnimation(faceKey: number) {
-  const showAnimationContext = useContext(ShowAnimationContext);
-  return showAnimationContext[faceKey];
-}
+const useBookContext = () => {
+  return useContext(BookStateContext);
+};
 
-export { useCurrentAnimation };
+export { useBookContext }

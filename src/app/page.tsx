@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Book, { ShowAnimationContext } from "@/components/Book";
+import Book from "@/components/Book/Book";
 
 import WelcomePage from "@/components/WelcomePage";
 import AboutMePage from "@/components/AboutMePage";
@@ -26,9 +26,10 @@ export default function Home() {
       <Book
         faces={[
           <Intro key={0} text="" />,
-          // <Intro key={1} text='Page 1'/>,
           <WelcomePage key={1} faceKey={1} />,
           <AboutMePage key={2} faceKey={2} />,
+          <WelcomePage key={3} faceKey={3} />,
+          <AboutMePage key={4} faceKey={4} />,
           <Empty key={3} />,
         ]}
       />
