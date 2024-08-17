@@ -1,43 +1,30 @@
-"use client";
 import Image from "next/image";
-import Book, { ShowAnimationContext } from "@/components/Book";
+import Book from "@/components/Book/Book";
 
-import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
-import { useContext, useEffect, useState } from "react";
-import WelcomePage from "@/components/WelcomePage";
-import AboutMePage from "@/components/AboutMePage";
-
-function Intro(props: { text: string }) {
-  return <center>{props.text}</center>;
-}
-
-function Empty() {
-  return <div></div>;
-}
-
-function AnimationPage(props: { faceKey: number }) {
-  const animation = useContext(ShowAnimationContext)[props.faceKey];
-
-  return (
-    <center>
-      <RoughNotation type="underline" show={animation}>
-        Hello RoughNotation
-      </RoughNotation>
-    </center>
-  );
-}
+import WelcomePage from "@/components/Pages/WelcomePage";
+import AboutMePage from "@/components/Pages/AboutMePage";
+import Empty from "@/components/Pages/EmptyPage";
+import SkillsPage from "@/components/Pages/SkillsPage";
 
 export default function Home() {
   return (
     <main className="flex h-screen w-screen font-mono">
-      <Image src="/natural-wooden-background.jpg" alt="background" fill />
+      <Image
+        src="/natural-wooden-background.jpg"
+        className="object-cover"
+        alt="background"
+        fetchPriority="high"
+        fill
+        priority
+      />
       <Book
         faces={[
-          <Intro key={0} text="" />,
-          // <Intro key={1} text='Page 1'/>,
+          <Empty key={0} faceKey={0} />,
           <WelcomePage key={1} faceKey={1} />,
           <AboutMePage key={2} faceKey={2} />,
-          <Empty key={3}/>,
+          <SkillsPage key={3} faceKey={3} />,
+          <Empty key={4} faceKey={4} />,
+          <Empty key={5} faceKey={5} />,
         ]}
       />
     </main>

@@ -1,10 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
-import { ShowAnimationContext } from "./Book";
-import { useContext } from "react";
+import { useBookContext } from "../Book";
 
 function WelcomePage(props: { faceKey: number }) {
-  const animation = useContext(ShowAnimationContext)[props.faceKey];
+  const { isFaceVisible, decrementPage } = useBookContext();
+  const animation = isFaceVisible(props.faceKey);
 
   // TODO: refactor all these cards into some abstraction
   const pageCover = (
@@ -13,7 +15,7 @@ function WelcomePage(props: { faceKey: number }) {
 
   const headshotImage = (
     <div className="absolute left-[1.5%] top-[2%] h-[39%] w-[48%] rotate-1 rounded-sm bg-orange-100 p-[3%] drop-shadow-md">
-      <Image src="/headshot-photo.png" alt="sample" fill />
+      <Image unoptimized src="/headshot-photo.jpg" alt="sample" fill />
     </div>
   );
 
@@ -29,31 +31,39 @@ function WelcomePage(props: { faceKey: number }) {
             iterations={1}
             order={"1"}
           >
-            {/* <span className="text-3xl"> */}
             {"David"}
-            {/* </span> */}
           </RoughNotation>
         </h1>
         <br />
 
         {/* // TODO: Make this all highlight at same time */}
         <span className="text-lg">
-          <RoughNotation type="highlight" color="Thistle" order={"2"}>
-            machine learning
+          <RoughNotation
+            type="highlight"
+            color="Thistle"
+            padding={0}
+            order={"2"}
+          >
+            {"machine learning"}
           </RoughNotation>{" "}
-          engineer
+          <span>{"engineer"}</span>
         </span>
         <span className="text-lg">
-          <RoughNotation type="highlight" color="LightGreen" order={"2"}>
-            backend
-          </RoughNotation>{" "}
-          developer
+          <RoughNotation
+            type="highlight"
+            color="LightGreen"
+            padding={0}
+            order={"2"}
+          >
+            {"backend"}
+          </RoughNotation>
+          <span>{" developer"}</span>
         </span>
         <span className="text-lg">
-          <RoughNotation type="highlight" color="Gold" order={"2"}>
-            math
+          <RoughNotation type="highlight" color="Gold" padding={0} order={"2"}>
+            {"math"}
           </RoughNotation>{" "}
-          nerd
+          <span className="">{"nerd"}</span>
         </span>
       </RoughNotationGroup>
     </div>
@@ -63,26 +73,26 @@ function WelcomePage(props: { faceKey: number }) {
     <div className="absolute left-[07%] top-[40%] flex h-[28%] w-[45%] -rotate-1 flex-col rounded-sm bg-yellow-50 p-4 drop-shadow-md">
       <RoughNotationGroup show={animation}>
         <span className="text-lg">
-          {" - mle & swe at "}
-          <RoughNotation type="highlight" color="Thistle" padding={2}>
-            UKG
+          <span>{" - mle & swe at "}</span>
+          <RoughNotation type="highlight" color="Thistle" padding={0}>
+            {"UKG"}
           </RoughNotation>
         </span>
         <span className="text-lg">
-          {" - "}
-          <RoughNotation type="highlight" color="LightGreen" padding={2}>
-            {"georgia tech "}
+          <span>{" - "}</span>
+          <RoughNotation type="highlight" color="LightGreen" padding={0}>
+            {"georgia tech"}
           </RoughNotation>
-          {"class of 2023"}
+          <span>{" class of 2023"}</span>
         </span>
         <span className="text-lg">
           {" - BS in "}
-          <RoughNotation type="highlight" color="Gold">
-            math
+          <RoughNotation type="highlight" color="Gold" padding={0}>
+            {"math"}
           </RoughNotation>
-          {" and "}
-          <RoughNotation type="highlight" color="Gold">
-            cs
+          <span>{" and "}</span>
+          <RoughNotation type="highlight" color="Gold" padding={0}>
+            {"cs"}
           </RoughNotation>
         </span>
       </RoughNotationGroup>
@@ -90,26 +100,31 @@ function WelcomePage(props: { faceKey: number }) {
   );
 
   const skylineImage = (
-    <div className="absolute left-[54%] top-[5%] h-[36.4%] w-[42%] -rotate-1 rounded-sm drop-shadow-md">
-      <Image src="/atlanta-skyline-photo.png" alt="sample" fill />
-    </div>
-  );
-
-  const beachImage = (
     <div className="absolute left-[45%] top-[55%] h-[38%] w-[45%] rotate-3 rounded-sm drop-shadow-md">
-      <Image src="/sea-shore-photo.png" alt="sample" fill />
+      <Image unoptimized src="/atlanta-skyline-photo.jpg" alt="sample" fill />
     </div>
   );
 
   const macbookSticker = (
     <div className="absolute left-[53%] top-[30%] aspect-square w-[31%]">
-      <Image src="/macbook-sticker.png" alt="sample" fill />
+      <Image unoptimized src="/macbook-sticker.png" alt="sample" fill />
     </div>
   );
 
   const moneyplantSticker = (
     <div className="absolute left-[10%] top-[65%] aspect-square w-[30%]">
-      <Image src="/money-plant-sticker.png" alt="sample" fill />
+      <Image unoptimized src="/money-plant-sticker.png" alt="sample" fill />
+    </div>
+  );
+
+  const flipPageButton = (
+    <div className="absolute left-[8%] top-[88%] aspect-[1.2] w-[12%] -scale-x-100">
+      <Image
+        src="/drawn-arrow-icon.png"
+        alt="Drawn Arrow"
+        onClick={decrementPage}
+        fill
+      />
     </div>
   );
 
@@ -118,7 +133,7 @@ function WelcomePage(props: { faceKey: number }) {
       {pageCover}
       {greetingCard}
       {aboutMeCard}
-      {beachImage}
+      {skylineImage}
       {headshotImage}
       {macbookSticker}
       {moneyplantSticker}
@@ -127,4 +142,3 @@ function WelcomePage(props: { faceKey: number }) {
 }
 
 export default WelcomePage;
-

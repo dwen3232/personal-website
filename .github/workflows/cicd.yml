@@ -1,0 +1,36 @@
+name: CI/CD
+on: push
+jobs:
+  build-and-push-bundle:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Cache Next.js 
+        uses: actions/cache@v4
+        id: next-cache-build
+        with:
+          path: |
+            node_modules
+          key: ${{ runner.os }}-portfolio-next-build-${{ github.run_id }}
+          restore-keys: |
+            ${{ runner.os }}-portfolio-next-build-
+      - name: Install dependencies
+        run: npm install
+      - name: Build bundle
+        run: npm run build
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-rmodi
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: Deploy to S3
+        run: aws s3 sync ./out s3://${{ vars.AWS_S3_NEXT_BUNDLE_NAME }}
+      - name: Invalidate CloudFront
+        run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
