@@ -1,5 +1,5 @@
 # Portfolio Website
-This is the code for my scrapbook themed portfolio website! Check it out at [davidrwen.com](davidrwen.com)!
+This is the code for my scrapbook themed portfolio website! Check it out at [davidrwen.com](https://www.davidrwen.com)!
 
 ## Running it locally
 
