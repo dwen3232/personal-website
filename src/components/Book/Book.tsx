@@ -17,6 +17,11 @@ function Book(props: {
   /** Number controlling which page is being shown on the right side of the book, if equal to numPages, no page on the right side */
   const [currentPage, setCurrentPage] = useState<number>(0);
 
+  /** Controls which pages will display their animations and when they will */
+  const [faceVisiblityFlags, setVisibilityFlags] = useState<boolean[]>(
+    Array(numFaces).fill(false)
+  );
+
   /** Function that increments currentPage only if animationLock is available */
   const incrementPage = useCallback(() => {
     console.log(`incrementPage`);
@@ -26,7 +31,7 @@ function Book(props: {
         currentPage < numPages ? currentPage + 1 : currentPage
       );
     }
-  }, [animationLock, setAnimationLock, setCurrentPage]);
+  }, [animationLock, numPages, setAnimationLock, setCurrentPage]);
 
   /** Function that decrements currentPage only if animationLock is available */
   const decrementPage = useCallback(() => {
@@ -40,23 +45,29 @@ function Book(props: {
   }, [animationLock, setAnimationLock, setCurrentPage]);
 
   /** Function that releases the animation lock */
-  const releasePageTransitionLock = () => {
+  const releasePageTransitionLock = useCallback(() => {
     console.log("release animation lock");
     setAnimationLock(false);
-  };
+  }, [setAnimationLock]);
 
+  /** Used for updating whether a face is visible */
+  const updateVisibilityFlags = useCallback(() => {
+    let newState = Array(numFaces).fill(false);
+    if (2 * currentPage < numFaces) {
+      newState[2 * currentPage] = true;
+    }
+    if (2 * currentPage - 1 >= 0) {
+      newState[2 * currentPage - 1] = true;
+    }
+    setVisibilityFlags(newState);
+  }, [currentPage, numFaces, setVisibilityFlags]);
+
+  /** Returns whether a face is visible */
   const isFaceVisible = useCallback(
     (face: number) => {
-      if (
-        !animationLock &&
-        face <= 2 * currentPage &&
-        face > 2 * (currentPage - 1)
-      ) {
-        return true;
-      }
-      return false;
+      return faceVisiblityFlags[face]
     },
-    [currentPage, numFaces, animationLock]
+    [faceVisiblityFlags]
   );
 
   /** Immediately flip to Page 1 */
@@ -82,7 +93,6 @@ function Book(props: {
             animationLock,
             incrementPage,
             decrementPage,
-            releasePageTransitionLock,
             isFaceVisible,
           }}
         >
@@ -92,6 +102,8 @@ function Book(props: {
               num={n}
               front={props.faces[2 * n]}
               back={n + 1 < numFaces && props.faces[2 * n + 1]}
+              releasePageTransitionLock={releasePageTransitionLock}
+              updateVisibilityFlags={updateVisibilityFlags}
             />
           ))}
         </BookStateContext.Provider>

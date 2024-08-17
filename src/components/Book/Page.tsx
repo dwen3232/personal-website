@@ -1,17 +1,16 @@
-import { useContext, useRef } from "react";
 import { CSSTransition } from "react-transition-group";
-import { BookStateContext } from "./context";
+import { useBookContext } from "./hooks";
+import { useRef } from "react";
 
 function Page(props: {
   num: number;
   front: React.ReactNode;
   back: React.ReactNode;
+  releasePageTransitionLock(): void;
+  updateVisibilityFlags(): void;
 }) {
-  const {
-    currentPage,
-    numFaces,
-    releasePageTransitionLock,
-  } = useContext(BookStateContext);
+  const { releasePageTransitionLock, updateVisibilityFlags } = props;
+  const { currentPage, numFaces } = useBookContext();
   /** If page isFlipped, page is on the left side, front hidden and back showing */
   const isFlipped = props.num < currentPage;
 
@@ -30,7 +29,7 @@ function Page(props: {
         classNames={"front-page"}
         onEntered={() => {
           releasePageTransitionLock();
-          // updateShowAnimation();
+          updateVisibilityFlags();
         }}
       >
         <div
@@ -48,7 +47,7 @@ function Page(props: {
         classNames={"back-page"}
         onExited={() => {
           releasePageTransitionLock();
-          // updateShowAnimation();
+          updateVisibilityFlags();
         }}
       >
         <div

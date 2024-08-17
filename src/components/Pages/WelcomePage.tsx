@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
-import { useBookContext } from "./Book";
+import { useBookContext } from "../Book";
 
 function WelcomePage(props: { faceKey: number }) {
   const { isFaceVisible, decrementPage } = useBookContext();
@@ -137,7 +137,6 @@ function WelcomePage(props: { faceKey: number }) {
       {headshotImage}
       {macbookSticker}
       {moneyplantSticker}
-      {flipPageButton}
     </div>
   );
 }

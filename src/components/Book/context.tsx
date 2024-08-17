@@ -7,7 +7,6 @@ interface BookStateInterface {
   animationLock: boolean;
   incrementPage(): void;
   decrementPage(): void;
-  releasePageTransitionLock(): void;
   isFaceVisible(page: number): boolean;
 }
 
@@ -18,7 +17,6 @@ const BookStateContext = createContext<BookStateInterface>({
   animationLock: false,
   incrementPage: () => {},
   decrementPage: () => {},
-  releasePageTransitionLock: () => {},
   isFaceVisible: (_) => false,
 });
 

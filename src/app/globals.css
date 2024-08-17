@@ -13,6 +13,7 @@ html {
 }
 
 .front-page {
+  will-change: transform;
   backface-visibility: hidden;
   background-color: #f3f0df;
 }

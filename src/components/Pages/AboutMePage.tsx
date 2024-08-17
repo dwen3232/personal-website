@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { RoughNotation } from "react-rough-notation";
-import { useBookContext } from "./Book";
+import { useBookContext } from "../Book";
 
 function AboutMePage(props: { faceKey: number }) {
   const { isFaceVisible, incrementPage } = useBookContext();
