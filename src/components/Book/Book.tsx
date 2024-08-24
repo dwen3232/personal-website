@@ -65,7 +65,7 @@ function Book(props: {
   /** Returns whether a face is visible */
   const isFaceVisible = useCallback(
     (face: number) => {
-      return faceVisiblityFlags[face]
+      return faceVisiblityFlags[face];
     },
     [faceVisiblityFlags]
   );
@@ -73,13 +73,10 @@ function Book(props: {
   /** Immediately flip to Page 1 */
   useEffect(() => {
     console.log("Triggered initial page flip");
-    if (currentPage === 0) {
-      incrementPage();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [incrementPage]);
-
-  console.log(`currentPage: ${currentPage}`);
+    setCurrentPage((currentPage) =>
+      currentPage === 0 ? currentPage + 1 : currentPage
+    );
+  }, [setCurrentPage]);
 
   return (
     // TODO: find the best way to size this
