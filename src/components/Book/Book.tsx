@@ -1,9 +1,12 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { BookStateContext } from "./context";
 import Page from "./Page";
 import { FLIP_DURATION_MS } from "./constants";
+
+/** Minimum horizontal drag distance, in px, before a touch gesture counts as a swipe */
+const SWIPE_THRESHOLD_PX = 50;
 
 function Book(props: {
   /** Faces to be displayed within each Book's Page, each Page displays two faces */
@@ -79,9 +82,49 @@ function Book(props: {
     );
   }, [setCurrentPage]);
 
+  /** Arrow-key navigation */
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") {
+        decrementPage();
+      } else if (event.key === "ArrowRight") {
+        incrementPage();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [incrementPage, decrementPage]);
+
+  /** Swipe navigation */
+  const touchStartXRef = useRef<number | null>(null);
+
+  const handleTouchStart = useCallback((event: React.TouchEvent) => {
+    touchStartXRef.current = event.touches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback(
+    (event: React.TouchEvent) => {
+      const touchStartX = touchStartXRef.current;
+      touchStartXRef.current = null;
+      if (touchStartX === null) return;
+
+      const deltaX = event.changedTouches[0].clientX - touchStartX;
+      if (deltaX <= -SWIPE_THRESHOLD_PX) {
+        incrementPage();
+      } else if (deltaX >= SWIPE_THRESHOLD_PX) {
+        decrementPage();
+      }
+    },
+    [incrementPage, decrementPage]
+  );
+
   return (
     // TODO: find the best way to size this
-    <div className="z-10 m-auto aspect-[99/70] w-[95vmin] rounded-lg bg-blue-400 p-3 shadow-2xl">
+    <div
+      className="z-10 m-auto aspect-[99/70] w-[95vmin] rounded-lg bg-blue-400 p-3 shadow-2xl"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       <div
         className="pages relative h-full w-full bg-transparent"
         style={{ "--flip-duration": `${FLIP_DURATION_MS}ms` } as React.CSSProperties}
