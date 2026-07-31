@@ -75,7 +75,7 @@ function WelcomePage(props: { faceKey: number }) {
         <span className="text-lg">
           <span>{" - mle & swe at "}</span>
           <RoughNotation type="highlight" color="Thistle" padding={0}>
-            {"UKG"}
+            {"LAHZO"}
           </RoughNotation>
         </span>
         <span className="text-lg">
