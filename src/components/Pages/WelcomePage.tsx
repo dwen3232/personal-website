@@ -3,9 +3,10 @@
 import Image from "next/image";
 import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
 import { useBookContext } from "../Book";
+import FlipPageButton from "../Book/FlipPageButton";
 
 function WelcomePage(props: { faceKey: number }) {
-  const { isFaceVisible, decrementPage } = useBookContext();
+  const { isFaceVisible } = useBookContext();
   const animation = isFaceVisible(props.faceKey);
 
   // TODO: refactor all these cards into some abstraction
@@ -117,17 +118,6 @@ function WelcomePage(props: { faceKey: number }) {
     </div>
   );
 
-  const flipPageButton = (
-    <div className="absolute left-[8%] top-[88%] aspect-[1.2] w-[12%] -scale-x-100">
-      <Image
-        src="/drawn-arrow-icon.png"
-        alt="Drawn Arrow"
-        onClick={decrementPage}
-        fill
-      />
-    </div>
-  );
-
   return (
     <div className="relative h-full w-full">
       {pageCover}
@@ -137,6 +127,7 @@ function WelcomePage(props: { faceKey: number }) {
       {headshotImage}
       {macbookSticker}
       {moneyplantSticker}
+      <FlipPageButton flipDirection="left" />
     </div>
   );
 }

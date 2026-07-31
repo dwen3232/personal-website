@@ -1,6 +1,7 @@
 import { CSSTransition } from "react-transition-group";
 import { useBookContext } from "./hooks";
 import { useRef } from "react";
+import { FLIP_DURATION_MS } from "./constants";
 
 function Page(props: {
   num: number;
@@ -25,7 +26,7 @@ function Page(props: {
       <CSSTransition
         nodeRef={frontRef}
         in={isFlipped}
-        timeout={1500}
+        timeout={FLIP_DURATION_MS}
         classNames={"front-page"}
         onEntered={() => {
           releasePageTransitionLock();
@@ -43,7 +44,7 @@ function Page(props: {
       <CSSTransition
         nodeRef={backRef}
         in={isFlipped}
-        timeout={1500}
+        timeout={FLIP_DURATION_MS}
         classNames={"back-page"}
         onExited={() => {
           releasePageTransitionLock();

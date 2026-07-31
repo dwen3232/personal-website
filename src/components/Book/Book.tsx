@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { BookStateContext } from "./context";
 import Page from "./Page";
+import { FLIP_DURATION_MS } from "./constants";
 
 function Book(props: {
   /** Faces to be displayed within each Book's Page, each Page displays two faces */
@@ -81,7 +82,10 @@ function Book(props: {
   return (
     // TODO: find the best way to size this
     <div className="z-10 m-auto aspect-[99/70] w-[95vmin] rounded-lg bg-blue-400 p-3 shadow-2xl">
-      <div className="pages relative h-full w-full bg-transparent">
+      <div
+        className="pages relative h-full w-full bg-transparent"
+        style={{ "--flip-duration": `${FLIP_DURATION_MS}ms` } as React.CSSProperties}
+      >
         <BookStateContext.Provider
           value={{
             numFaces,

@@ -4,9 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { RoughNotation } from "react-rough-notation";
 import { useBookContext } from "../Book";
+import FlipPageButton from "../Book/FlipPageButton";
 
 function AboutMePage(props: { faceKey: number }) {
-  const { isFaceVisible, incrementPage } = useBookContext();
+  const { isFaceVisible } = useBookContext();
   const animation = isFaceVisible(props.faceKey);
 
   // TODO: refactor all these cards into some abstraction
@@ -94,12 +95,6 @@ function AboutMePage(props: { faceKey: number }) {
     </div>
   );
 
-  const flipPageButton = (
-    <div className="absolute left-[77%] top-[88%] aspect-[1.2] w-[12%]">
-      <Image src="/drawn-arrow-icon.png" alt="Drawn Arrow" onClick={incrementPage} fill />
-    </div>
-  );
-
   return (
     <div className="relative h-full w-full">
       {pageCover}
@@ -107,7 +102,7 @@ function AboutMePage(props: { faceKey: number }) {
       {seashoreImage}
       {chessSticker}
       {socialMediaLinks}
-      {flipPageButton}
+      <FlipPageButton flipDirection="right" />
     </div>
   );
 }
