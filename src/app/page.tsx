@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Book from "@/components/Book/Book";
+import WoodBackground from "@/components/WoodBackground";
 
 import WelcomePage from "@/components/Pages/WelcomePage";
 import AboutMePage from "@/components/Pages/AboutMePage";
@@ -10,14 +10,7 @@ import UnderConstructionPage from "@/components/Pages/UnderConstructionPage";
 export default function Home() {
   return (
     <main className="flex h-screen w-screen font-mono">
-      <Image
-        src="/natural-wooden-background.jpg"
-        className="object-cover"
-        alt="background"
-        fetchPriority="high"
-        fill
-        priority
-      />
+      <WoodBackground />
       <Book
         faces={[
           <EmptyPage key={0} faceKey={0} />,
