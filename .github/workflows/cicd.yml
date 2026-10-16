@@ -31,6 +31,6 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-rmodi
           aws-region: ${{ vars.AWS_REGION }}
       - name: Deploy to S3
-        run: aws s3 sync ./out s3://${{ vars.AWS_S3_NEXT_BUNDLE_NAME }}
+        run: aws s3 sync ./out s3://${{ vars.AWS_S3_NEXT_BUNDLE_NAME }} --delete
       - name: Invalidate CloudFront
         run: aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
