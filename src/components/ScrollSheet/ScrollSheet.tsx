@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import ScrollTopBar from "./ScrollTopBar";
 import { FaceVisibilityContext, currentHashSlug, replaceHashSlug, type FaceSpec } from "../Shell";
 
 /** Share of a sheet that must be on screen before it counts as visible */
@@ -21,7 +22,6 @@ function ScrollSheet(props: {
 }) {
   const active = props.active ?? true;
   const sheetRefs = useRef<(HTMLElement | null)[]>([]);
-  const trackRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState<Set<number>>(new Set());
 
   const faces = useMemo(
@@ -55,7 +55,7 @@ function ScrollSheet(props: {
     return () => observer.disconnect();
   }, [active]);
 
-  /** Route drawing and the progress pin, both tied to scroll position */
+  /** Route drawing, tied to scroll position */
   useEffect(() => {
     if (!active) return;
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -78,9 +78,6 @@ function ScrollSheet(props: {
         const slug = faces[current]?.face.slug ?? null;
         if (currentHashSlug() !== slug) replaceHashSlug(current === 0 ? null : slug);
       }
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      const overall = max > 0 ? window.scrollY / max : 0;
-      trackRef.current?.style.setProperty("--p", `${(overall * 100).toFixed(1)}%`);
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -99,13 +96,7 @@ function ScrollSheet(props: {
   return (
     // Sized in px: the root font-size is viewport-based (for the Book), so rem is tiny on phones
     <div className="relative min-h-screen font-hand">
-      <header className="scroll-topbar fixed inset-x-0 top-0 z-30 flex items-center gap-[12px] px-[20px] pb-[16px] pt-[max(12px,env(safe-area-inset-top))] text-[#f5efe4]">
-        <span className="whitespace-nowrap font-title text-[26px] font-bold tracking-[0.06em]">David Wen</span>
-        <div ref={trackRef} aria-hidden="true" className="scroll-track relative h-[4px] flex-1">
-          <i className="scroll-track-fill" />
-          <b className="scroll-track-pin" />
-        </div>
-      </header>
+      <ScrollTopBar active={active} />
 
       <div className="book-cover mx-auto mb-[64px] mt-[68px] w-[min(560px,calc(100%-24px))] rounded-[14px] p-[10px]">
         <FaceVisibilityContext.Provider value={{ isFaceVisible }}>

@@ -5,7 +5,7 @@ import localFont from 'next/font/local'
 const inter = Inter({ subsets: ['latin'] })
 const title = Amatic_SC({ subsets: ['latin'], weight: '700', variable: '--font-title' })
 const hand = Kalam({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-hand' })
-const stamp = Courier_Prime({ subsets: ['latin'], weight: '700', variable: '--font-stamp' })
+const stamp = Courier_Prime({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-stamp' })
 
 /** Reading serif for prose. Libron v0.31, OFL: https://github.com/nicoverbruggen/libron */
 const read = localFont({

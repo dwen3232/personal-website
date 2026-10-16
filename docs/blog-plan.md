@@ -92,6 +92,14 @@ Done when `npm run build` emits `out/blog.html` and one HTML file per post. *Don
 4. Add syntax highlighting with `rehype-pretty-code`, or Shiki at build time.
 5. Respect `prefers-reduced-motion` in every animated component.
 
+*Done.* Notes:
+
+- `src/app/blog/layout.tsx` puts every blog page on one long sheet of the notebook paper (`.flow-sheet`, height follows the text) inside the leather cover, under `ScrollTopBar` (extracted from `ScrollSheet`), whose pin tracks reading progress. Posts scroll at every width; the book flip stays on the home page.
+- Body text is Libron; headings use Amatic SC and Kalam; links are rust-underlined; `---` becomes a dashed route with a pin. Typography for plain elements is `.post` in `globals.css`.
+- Components available in posts without an import (`src/mdx-components.tsx`): `Photo` (markdown images become taped prints keeping the photo's shape; `![alt](/img.jpg "caption")`), `Callout`, `Stamp`, `RouteDraw` (draws when scrolled into view).
+- Code is highlighted at build time by `rehype-pretty-code` + Shiki (`github-light`), shown as a taped card. `remark-gfm` adds tables, strikethrough, task lists and autolinks.
+- The index (`/blog`, titled "Field notes") lists posts as stops on a dashed route.
+
 ### Phase 3: Infra
 
 **Required: URI rewrite.** A static export writes `/blog/[slug]` as `out/blog/<slug>.html` ([Next.js static exports][next-export]). The distribution only maps `/` to `index.html` through `default_root_object`, so `/blog/my-post` currently reaches S3 unchanged and fails with a 403 or 404. Add a viewer-request CloudFront Function ([AWS sample][aws-sample]):

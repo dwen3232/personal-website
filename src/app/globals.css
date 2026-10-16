@@ -154,6 +154,207 @@
   }
 }
 
+/* ---------- blog ----------
+   One long sheet of the notebook paper whose height follows the text. */
+
+.flow-sheet {
+  position: relative;
+  isolation: isolate;
+  container-type: inline-size;
+  background-color: var(--paper);
+  --gutter-shade: none;
+}
+
+.post {
+  font-family: var(--font-read), Georgia, serif;
+  font-size: 19px;
+  line-height: 1.7;
+  color: var(--ink);
+}
+
+@media (max-width: 520px) {
+  .post {
+    font-size: 18px;
+  }
+}
+
+/* Element-level specificity: beats Tailwind's reset (also element-level, but earlier), loses
+   to utility classes, so components keep their own margins */
+:where(.post) > * + :is(p, ul, ol, blockquote, figure, table, pre, aside, div, h2, h3, h4) {
+  margin-top: 1.1em;
+}
+
+.post h2 {
+  margin-top: 1.7em;
+  font-family: var(--font-title), "Arial Narrow", sans-serif;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 0.04em;
+  text-wrap: balance;
+}
+
+.post h2::after {
+  content: "";
+  display: block;
+  width: min(60%, 320px);
+  height: 2px;
+  margin-top: 6px;
+  border-radius: 2px;
+  background: var(--ink);
+}
+
+.post h3 {
+  margin-top: 1.5em;
+  font-family: var(--font-hand), cursive;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.post h4 {
+  margin-top: 1.4em;
+  font-family: var(--font-title), "Arial Narrow", sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--rust);
+}
+
+.post a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--rust);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+.post a:hover,
+.post a:focus-visible {
+  color: var(--rust);
+}
+
+.post ul,
+.post ol {
+  padding-left: 1.5em;
+}
+
+.post ul {
+  list-style: none;
+}
+
+.post ol {
+  list-style: decimal;
+}
+
+.post ul > li::before {
+  content: "↳";
+  display: inline-block;
+  width: 1.5em;
+  margin-left: -1.5em;
+  color: var(--rust);
+}
+
+.post ol > li::marker {
+  font-family: var(--font-hand), cursive;
+  font-weight: 700;
+  color: var(--rust);
+}
+
+.post li + li {
+  margin-top: 0.35em;
+}
+
+.post blockquote {
+  padding: 0.1em 0 0.1em 1.1em;
+  border-left: 3px dashed var(--rust);
+  font-family: var(--font-hand), cursive;
+  font-size: 1.12em;
+  line-height: 1.55;
+}
+
+.post :not(pre) > code {
+  padding: 0.08em 0.35em;
+  border-radius: 3px;
+  background: rgba(201, 162, 115, 0.2);
+  font-family: var(--font-stamp), "Courier New", monospace;
+  font-size: 0.88em;
+}
+
+/* Code blocks: a taped index card. Colors come from Shiki at build time. */
+.post figure[data-rehype-pretty-code-figure] {
+  position: relative;
+  margin-top: 1.6em;
+}
+
+.post figure[data-rehype-pretty-code-figure]::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: -10px;
+  left: 50%;
+  width: 96px;
+  height: 22px;
+  translate: -50% 0;
+  rotate: -2deg;
+  background: var(--tex-crepe) 0 0 / 220px, rgba(224, 210, 174, 0.9);
+  background-blend-mode: multiply;
+  opacity: 0.93;
+}
+
+.post [data-rehype-pretty-code-title] {
+  margin-bottom: 8px;
+  font-family: var(--font-stamp), "Courier New", monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--rust);
+}
+
+.post pre {
+  overflow-x: auto;
+  padding: 20px 22px;
+  border: 1px solid rgba(42, 38, 34, 0.12);
+  border-radius: 4px;
+  background: #fdfbf5;
+  font-family: var(--font-stamp), "Courier New", monospace;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.post pre code {
+  display: grid;
+  font-family: inherit;
+}
+
+.post table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92em;
+}
+
+.post th,
+.post td {
+  padding: 6px 10px;
+  border-bottom: 1px dashed rgba(42, 38, 34, 0.25);
+  text-align: left;
+}
+
+.post th {
+  font-family: var(--font-hand), cursive;
+}
+
+.callout {
+  background: #fdfcf7;
+  outline: 1px solid rgba(42, 38, 34, 0.1);
+  outline-offset: -1px;
+}
+
+.callout-body > * + * {
+  margin-top: 0.6em;
+}
+
 /* ---------- notebook ---------- */
 
 .desk-walnut {
@@ -290,7 +491,8 @@ html {
 .front-page::before,
 .back-page::before,
 .scroll-sheet::before,
-.turn-sheet::before {
+.turn-sheet::before,
+.flow-sheet::before {
   content: "";
   position: absolute;
   inset: 0;

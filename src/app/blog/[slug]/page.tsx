@@ -1,5 +1,9 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getPosts } from "@/lib/posts";
+import PostStamp from "@/components/blog/PostStamp";
+import RouteRule from "@/components/blog/RouteRule";
+import { formatPostDate } from "@/lib/dates";
+import { getPosts, type PostMeta } from "@/lib/posts";
 
 /**
  * `output: "export"` rejects a dynamic route with no params, which is the state whenever
@@ -15,25 +19,59 @@ export async function generateStaticParams() {
   return posts.map((post) => ({ slug: post.slug }));
 }
 
+async function loadPost(slug: string) {
+  return (await import(`@/content/posts/${slug}.mdx`)) as {
+    default: React.ComponentType;
+    metadata: PostMeta;
+  };
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   if (slug === NO_POSTS_SLUG) return {};
-  const { metadata } = await import(`@/content/posts/${slug}.mdx`);
+  const { metadata } = await loadPost(slug);
   return { title: `${metadata.title} · David Wen`, description: metadata.summary };
 }
+
+const LINK_CLASS = "underline decoration-rust decoration-2 underline-offset-4 hover:text-rust";
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   if (slug === NO_POSTS_SLUG) notFound();
-  const { default: Post, metadata } = await import(`@/content/posts/${slug}.mdx`);
+  const { default: Post, metadata } = await loadPost(slug);
 
   return (
-    <main className="mx-auto max-w-[680px] px-[20px] py-[48px] font-read text-[18px] leading-[1.65] text-ink">
-      <h1 className="m-0 font-title text-[56px] leading-none">{metadata.title}</h1>
-      <div className="mt-[8px] text-[14px] text-[#6f675d]">{metadata.date}</div>
-      <article className="mt-[32px]">
+    <article>
+      <header>
+        <PostStamp>
+          {formatPostDate(metadata.date)}
+          {metadata.draft && " · draft"}
+        </PostStamp>
+        <h1 className="m-0 mt-[18px] font-title text-[clamp(44px,9cqw,72px)] font-bold leading-[0.95] tracking-[0.04em] [text-wrap:balance]">
+          {metadata.title}
+        </h1>
+        <p className="m-0 mt-[14px] font-hand text-[20px] leading-[1.45]">{metadata.summary}</p>
+      </header>
+      <RouteRule />
+      <div className="post">
         <Post />
-      </article>
-    </main>
+      </div>
+      <RouteRule />
+      <footer className="flex flex-wrap items-baseline justify-between gap-[12px] font-hand text-[18px]">
+        <Link href="/blog" className={LINK_CLASS}>
+          ← all field notes
+        </Link>
+        <span>
+          send a postcard <span className="text-rust">→</span>{" "}
+          <a className={LINK_CLASS} href="https://www.linkedin.com/in/davidrwen/" target="_blank" rel="noopener noreferrer">
+            linkedin
+          </a>
+          {" · "}
+          <a className={LINK_CLASS} href="https://github.com/dwen3232" target="_blank" rel="noopener noreferrer">
+            github
+          </a>
+        </span>
+      </footer>
+    </article>
   );
 }
