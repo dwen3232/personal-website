@@ -72,13 +72,14 @@ Give each content face a slug (`#about`). `Book` flips to that spread; `ScrollSh
 
 Each step ends with `npm run build` (output served from `out/`) and a manual check on desktop and phone widths.
 
-1. **Primitives, tokens, fonts.** No visible change.
-2. **Visibility interface; arrows and fillers moved into the shell.** No visible change.
-3. **Route Map faces.** Rebuild Welcome and About with the primitives and container units; new desk, cover and paper.
-4. **`ScrollSheet`, CSS shell switching, per-face route drawing.**
+1. **Primitives, tokens, fonts.** No visible change. *Done.*
+2. **Visibility interface; arrows and fillers moved into the shell.** No visible change. *Done.*
+3. **Route Map faces.** Rebuild Welcome and About with the primitives and container units; new desk, cover and paper. *Done.*
+4. **`ScrollSheet`, CSS shell switching, per-face route drawing.** *Done.* Faces use Tailwind `tall:` / `spread:` variants (container queries on the page box, defined in `tailwind.config.js`). Placeholder faces are `bookOnly`.
 5. **Deep links.**
 
 ## Risks
 
 - **rough-notation:** positioning breaks if a positioned wrapper is added between `.front-page`/`.back-page` and the face. Check every face after changing `Page.tsx`.
+- **Root font size:** `html { font-size: 1.125vmin }` makes `rem` tiny on phones. Size anything outside a page container (shell chrome) in `px`.
 - **Dev server:** `npm run build` while `next dev` runs empties the dev server's CSS. Stop it first, or verify against the static `out/` build instead.

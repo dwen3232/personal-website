@@ -18,6 +18,67 @@
   --tex-leather: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.09' numOctaves='5' seed='8' stitchTiles='stitch'/%3E%3CfeDiffuseLighting lighting-color='white' surfaceScale='3.2'%3E%3CfeDistantLight azimuth='225' elevation='55'/%3E%3C/feDiffuseLighting%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.221'/%3E%3CfeFuncG type='linear' slope='1.221'/%3E%3CfeFuncB type='linear' slope='1.221'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
 }
 
+/* ---------- shells ----------
+   CSS picks the visible shell so the static HTML is right before hydration.
+   Keep the media query in sync with BOOK_LAYOUT_QUERY in components/Shell/layout.ts. */
+
+.shell-book {
+  display: none;
+}
+
+@media (min-width: 900px) and (min-aspect-ratio: 5/4) {
+  .shell-book {
+    display: flex;
+  }
+
+  .shell-scroll {
+    display: none;
+  }
+}
+
+/* In the ScrollSheet, routes follow scroll position instead of animating on visibility */
+.scroll-sheet .route-draw,
+.scroll-sheet .route-drawn .route-draw {
+  stroke-dashoffset: calc(1 - var(--route-progress, 0));
+  transition: none;
+}
+
+/* ScrollSheet chrome */
+.scroll-topbar {
+  background: linear-gradient(180deg, rgba(60, 42, 31, 0.97) 70%, rgba(60, 42, 31, 0));
+}
+
+.scroll-sheet + .scroll-sheet {
+  border-top: 2px dashed rgba(42, 38, 34, 0.12);
+}
+
+.scroll-track {
+  background: radial-gradient(circle, rgba(245, 239, 228, 0.45) 1.5px, transparent 2px) 0 50% / 10px 100% repeat-x;
+}
+
+.scroll-track-fill {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 2px;
+  width: var(--p, 0%);
+  translate: 0 -50%;
+  border-radius: 2px;
+  background: #e7a07c;
+}
+
+.scroll-track-pin {
+  position: absolute;
+  top: 50%;
+  left: var(--p, 0%);
+  width: 12px;
+  aspect-ratio: 1;
+  border-radius: 50% 50% 50% 0;
+  rotate: -45deg;
+  translate: -50% -80%;
+  background: var(--rust);
+}
+
 /* ---------- notebook ---------- */
 
 .desk-walnut {
@@ -126,10 +187,20 @@ html {
   background-color: var(--paper);
 }
 
+/* A page in the ScrollSheet: same paper as a book page, no gutter */
+.scroll-sheet {
+  position: relative;
+  isolation: isolate;
+  container-type: size;
+  background-color: var(--paper);
+  --gutter-shade: none;
+}
+
 /* Paper and gutter shading live on a pseudo-element: an element's own cq units resolve
    against its ancestors, but its pseudo-elements resolve against the page itself. */
 .front-page::before,
-.back-page::before {
+.back-page::before,
+.scroll-sheet::before {
   content: "";
   position: absolute;
   inset: 0;

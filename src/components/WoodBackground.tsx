@@ -1,4 +1,4 @@
-/** Walnut desk surface behind the notebook */
+/** Walnut desk surface behind both shells */
 export default function WoodBackground() {
-  return <div aria-hidden="true" className="desk-walnut absolute inset-0" />;
+  return <div aria-hidden="true" className="desk-walnut fixed inset-0 -z-10" />;
 }

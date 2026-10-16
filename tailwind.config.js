@@ -1,3 +1,5 @@
+const plugin = require('tailwindcss/plugin')
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -25,5 +27,12 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // Page-shape variants: query the nearest page container (a book page or a scroll sheet),
+    // not the viewport. Book pages are ~0.7 wide-to-tall; scroll sheets are taller.
+    plugin(({ addVariant }) => {
+      addVariant('tall', '@container (max-aspect-ratio: 3/5)')
+      addVariant('spread', '@container (min-aspect-ratio: 3/5)')
+    }),
+  ],
 }

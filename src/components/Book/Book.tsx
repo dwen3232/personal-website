@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { BookStateContext } from "./context";
-import { FaceVisibilityContext, type FaceSpec } from "../Shell";
+import { FaceVisibilityContext, useActiveShell, type FaceSpec } from "../Shell";
 import Page from "./Page";
 import { FLIP_DURATION_MS } from "./constants";
 
@@ -13,6 +13,8 @@ function Book(props: {
   /** Faces to be displayed within each Book's Page, each Page displays two faces */
   faces: FaceSpec[];
 }) {
+  /** Both shells are in the DOM; only the visible one listens for input and auto-flips */
+  const active = useActiveShell() === "book";
   const numFaces: number = props.faces.length;
   const numPages: number = numFaces / 2;
 
@@ -75,16 +77,18 @@ function Book(props: {
     [faceVisiblityFlags]
   );
 
-  /** Immediately flip to Page 1 */
+  /** Flip to Page 1 as soon as the book is on screen */
   useEffect(() => {
+    if (!active) return;
     console.log("Triggered initial page flip");
     setCurrentPage((currentPage) =>
       currentPage === 0 ? currentPage + 1 : currentPage
     );
-  }, [setCurrentPage]);
+  }, [active, setCurrentPage]);
 
   /** Arrow-key navigation */
   useEffect(() => {
+    if (!active) return;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowLeft") {
         decrementPage();
@@ -94,7 +98,7 @@ function Book(props: {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [incrementPage, decrementPage]);
+  }, [active, incrementPage, decrementPage]);
 
   /** Swipe navigation */
   const touchStartXRef = useRef<number | null>(null);

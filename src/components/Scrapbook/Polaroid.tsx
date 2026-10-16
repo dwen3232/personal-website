@@ -12,7 +12,7 @@ function Polaroid(props: {
 }) {
   return (
     <figure
-      className={`polaroid absolute m-0 p-[1.2cqw] pb-[4.8cqw] ${props.className ?? ""}`.trim()}
+      className={`polaroid absolute m-0 p-[1.2cqw] pb-[4.8cqw] tall:p-[1.8cqw] tall:pb-[6.4cqw] ${props.className ?? ""}`.trim()}
       style={props.style}
     >
       <div className="relative h-full w-full">
@@ -26,7 +26,7 @@ function Polaroid(props: {
         />
       </div>
       {props.caption && (
-        <figcaption className="absolute inset-x-0 bottom-[3%] text-center font-hand text-[1.8cqw] text-[#4a4744]">
+        <figcaption className="absolute inset-x-0 bottom-[3%] text-center font-hand text-[1.8cqw] tall:text-[3cqw] text-[#4a4744]">
           {props.caption}
         </figcaption>
       )}
