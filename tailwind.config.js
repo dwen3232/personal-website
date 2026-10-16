@@ -7,6 +7,17 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        paper: 'var(--paper)',
+        ink: 'var(--ink)',
+        rust: 'var(--rust)',
+        kraft: 'var(--kraft)',
+      },
+      fontFamily: {
+        title: ['var(--font-title)', '"Arial Narrow"', 'sans-serif'],
+        hand: ['var(--font-hand)', '"Comic Sans MS"', 'cursive'],
+        stamp: ['var(--font-stamp)', '"Courier New"', 'monospace'],
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':

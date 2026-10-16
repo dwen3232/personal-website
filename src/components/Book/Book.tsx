@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { BookStateContext } from "./context";
+import { FaceVisibilityContext, type FaceSpec } from "../Shell";
 import Page from "./Page";
 import { FLIP_DURATION_MS } from "./constants";
 
@@ -10,7 +11,7 @@ const SWIPE_THRESHOLD_PX = 50;
 
 function Book(props: {
   /** Faces to be displayed within each Book's Page, each Page displays two faces */
-  faces: React.ReactNode[];
+  faces: FaceSpec[];
 }) {
   const numFaces: number = props.faces.length;
   const numPages: number = numFaces / 2;
@@ -121,7 +122,7 @@ function Book(props: {
   return (
     // TODO: find the best way to size this
     <div
-      className="z-10 m-auto aspect-[99/70] w-[95vmin] rounded-lg bg-blue-400 p-3 shadow-2xl"
+      className="book-cover z-10 m-auto aspect-[99/70] w-[95vmin] rounded-[1.2%/1.7%] p-[1.8%]"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
@@ -137,21 +138,30 @@ function Book(props: {
             animationLock,
             incrementPage,
             decrementPage,
-            isFaceVisible,
           }}
         >
-          {Array.from(Array(numPages).keys()).map((n, _) => (
-            <Page
-              key={n}
-              num={n}
-              front={props.faces[2 * n]}
-              back={n + 1 < numFaces && props.faces[2 * n + 1]}
-              releasePageTransitionLock={releasePageTransitionLock}
-              updateVisibilityFlags={updateVisibilityFlags}
-            />
-          ))}
+          <FaceVisibilityContext.Provider value={{ isFaceVisible }}>
+            {Array.from(Array(numPages).keys()).map((n, _) => {
+              const front = props.faces[2 * n];
+              const back = props.faces[2 * n + 1];
+              return (
+                <Page
+                  key={n}
+                  num={n}
+                  front={front.node}
+                  back={back?.node}
+                  frontArrow={!front.filler}
+                  backArrow={!!back && !back.filler && !front.filler}
+                  releasePageTransitionLock={releasePageTransitionLock}
+                  updateVisibilityFlags={updateVisibilityFlags}
+                />
+              );
+            })}
+          </FaceVisibilityContext.Provider>
         </BookStateContext.Provider>
       </div>
+      <div aria-hidden="true" className="book-ribbon absolute bottom-[-5%] left-[49.4%] z-[-1] h-[10%] w-[1.4%]" />
+      <div aria-hidden="true" className="book-elastic absolute bottom-[-2.5%] right-[0.4%] top-[-2.5%] z-20 w-[1%] rounded-sm" />
     </div>
   );
 }

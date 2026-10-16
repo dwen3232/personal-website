@@ -13,12 +13,12 @@ export default function Home() {
       <WoodBackground />
       <Book
         faces={[
-          <EmptyPage key={0} faceKey={0} />,
-          <WelcomePage key={1} faceKey={1} />,
-          <AboutMePage key={2} faceKey={2} />,
-          <UnderConstructionPage flipDirection="left" key={3} />,
-          <UnderConstructionPage flipDirection="right" key={4} />,
-          <UnderConstructionPage flipDirection="left" key={5} />,
+          { node: <EmptyPage key={0} faceKey={0} />, filler: true },
+          { node: <WelcomePage key={1} faceKey={1} /> },
+          { node: <AboutMePage key={2} faceKey={2} /> },
+          { node: <UnderConstructionPage key={3} /> },
+          { node: <UnderConstructionPage key={4} /> },
+          { node: <UnderConstructionPage key={5} /> },
         ]}
       />
     </main>
