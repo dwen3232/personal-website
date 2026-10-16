@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { FaceVisibilityContext, currentHashSlug, replaceHashSlug, useActiveShell, type FaceSpec } from "../Shell";
+import { FaceVisibilityContext, currentHashSlug, replaceHashSlug, type FaceSpec } from "../Shell";
 
 /** Share of a sheet that must be on screen before it counts as visible */
 const VISIBLE_THRESHOLD = 0.2;
@@ -10,11 +10,16 @@ const VISIBLE_THRESHOLD = 0.2;
 const DRAW_LINE = 0.6;
 
 /**
- * The phone and portrait-tablet shell: every content face laid end to end on one long
- * sheet, inside the same leather cover. Routes draw with scroll position.
+ * A scrolling shell: every content face laid end to end on one long sheet, inside the
+ * leather cover. Routes draw with scroll position. Not used on the home page (phones get
+ * PageTurn there); kept for long-form pages such as the blog.
  */
-function ScrollSheet(props: { faces: FaceSpec[] }) {
-  const active = useActiveShell() === "scroll";
+function ScrollSheet(props: {
+  faces: FaceSpec[];
+  /** Attach scroll and visibility listeners. Pass false while the sheet is hidden */
+  active?: boolean;
+}) {
+  const active = props.active ?? true;
   const sheetRefs = useRef<(HTMLElement | null)[]>([]);
   const trackRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState<Set<number>>(new Set());
