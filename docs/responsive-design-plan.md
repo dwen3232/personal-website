@@ -7,7 +7,7 @@ Status: done, 2026-10-15
 Ship the chosen redesign on both screen shapes from one set of page content:
 
 - **Desktop:** "Route Map" travel notebook. Two-page spread, page flip, leather cover, flat cream dot-grid paper, dashed route between map pins.
-- **Mobile and portrait tablets:** "Scroll the route". The pages are laid end to end as one scrolling sheet, and the route draws itself as you scroll.
+- **Mobile and portrait tablets:** "Turn one page" (`PageTurn`). Only the right-hand page shows, spine on the left; a swipe, tap or arrow key turns one page. A face taller than one page spans several pages (`tallPages`). The earlier "Scroll the route" shell (`ScrollSheet`) is kept, unused on the home page, for the blog.
 
 Mockups: [all directions](https://claude.ai/artifact/RvJntYu2u1jBzT87BAek9e) (desktop is "4A Route Map, bujo paper"), [mobile](https://claude.ai/artifact/GLV8TXDzApTiZa3HKfocSu) (option B).
 
@@ -16,7 +16,7 @@ Mockups: [all directions](https://claude.ai/artifact/RvJntYu2u1jBzT87BAek9e) (de
 Each page's content is written once, and two shells present it:
 
 - `Book`, the existing page-flip spread, on wide landscape screens
-- `ScrollSheet`, a new single scrolling sheet, everywhere else
+- `PageTurn`, one page at a time, everywhere else
 
 Faces never ask what device they are on. They only ask:
 

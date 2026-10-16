@@ -11,4 +11,6 @@ export interface FaceSpec {
   slug?: string;
   /** Width / height of this face's sheet in the ScrollSheet. Defaults to 0.5 */
   tallAspect?: number;
+  /** How many PageTurn leaves this face spans; each leaf shows the next slice of it. Defaults to 1 */
+  tallPages?: number;
 }

@@ -3,13 +3,13 @@
 import { useSyncExternalStore } from "react";
 
 /**
- * Screens matching this get the Book; everything else gets the ScrollSheet.
- * Keep in sync with the `.shell-book` / `.shell-scroll` rules in globals.css,
+ * Screens matching this get the Book; everything else gets the PageTurn.
+ * Keep in sync with the `.shell-book` / `.shell-turn` rules in globals.css,
  * which decide visibility before any JavaScript runs.
  */
 export const BOOK_LAYOUT_QUERY = "(min-width: 900px) and (min-aspect-ratio: 5/4)";
 
-export type ShellName = "book" | "scroll";
+export type ShellName = "book" | "turn";
 
 function subscribe(onChange: () => void) {
   const mql = window.matchMedia(BOOK_LAYOUT_QUERY);
@@ -24,7 +24,7 @@ function subscribe(onChange: () => void) {
 export function useActiveShell(): ShellName | null {
   return useSyncExternalStore(
     subscribe,
-    () => (window.matchMedia(BOOK_LAYOUT_QUERY).matches ? "book" : "scroll"),
+    () => (window.matchMedia(BOOK_LAYOUT_QUERY).matches ? "book" : "turn"),
     () => null
   );
 }

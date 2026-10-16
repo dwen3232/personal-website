@@ -31,7 +31,7 @@
     display: flex;
   }
 
-  .shell-scroll {
+  .shell-turn {
     display: none;
   }
 }
@@ -77,6 +77,81 @@
   rotate: -45deg;
   translate: -50% -80%;
   background: var(--rust);
+}
+
+/* PageTurn: one page at a time, turning around a spine on the left */
+.turn-stage {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(28px, env(safe-area-inset-top)) 12px max(56px, env(safe-area-inset-bottom));
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.turn-book {
+  position: relative;
+  height: 100%;
+  aspect-ratio: 0.55;
+  max-width: 100%;
+  border-radius: 0 12px 12px 0;
+  padding: 10px 10px 10px 0;
+}
+
+.turn-leaves {
+  position: relative;
+  height: 100%;
+  perspective: 1600px;
+  box-shadow: 1px 0 0 #e9e3d5, 2px 1px 0 #d8d0bf, 3px 1px 0 #e9e3d5, 4px 2px 0 #d0c8b6;
+  border-radius: 0 6px 6px 0;
+}
+
+.turn-leaf {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform-origin: 0 50%;
+  transition: transform var(--flip-duration, 0.9s) cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.turn-leaf.turned {
+  transform: rotateY(-180deg);
+}
+
+.turn-leaf > .turn-front,
+.turn-leaf > .turn-back {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 0 6px 6px 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background-color: var(--paper);
+}
+
+/* Binding shadow along the spine */
+.turn-front::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.04) 6%, transparent 14%);
+}
+
+.turn-back {
+  transform: rotateY(180deg);
+  background-image: linear-gradient(270deg, rgba(0, 0, 0, 0.18), transparent 30%);
+}
+
+/* The turn is the core interaction, so reduced motion shortens it rather than removing it */
+@media (prefers-reduced-motion: reduce) {
+  .turn-leaf {
+    --flip-duration: 0.45s;
+  }
 }
 
 /* ---------- notebook ---------- */
@@ -196,11 +271,23 @@ html {
   --gutter-shade: none;
 }
 
+/* A face inside a PageTurn leaf; may be several leaves tall, each leaf showing one window of it */
+.turn-sheet {
+  position: absolute;
+  left: 0;
+  right: 0;
+  isolation: isolate;
+  container-type: size;
+  background-color: var(--paper);
+  --gutter-shade: none;
+}
+
 /* Paper and gutter shading live on a pseudo-element: an element's own cq units resolve
    against its ancestors, but its pseudo-elements resolve against the page itself. */
 .front-page::before,
 .back-page::before,
-.scroll-sheet::before {
+.scroll-sheet::before,
+.turn-sheet::before {
   content: "";
   position: absolute;
   inset: 0;
