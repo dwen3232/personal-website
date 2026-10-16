@@ -16,6 +16,37 @@ const SWIPE_THRESHOLD_PX = 40;
 /** Taps right of this fraction of the page turn forward; left of it, back */
 const TAP_SPLIT = 0.45;
 
+/** Matches .turn-leaf's transition in globals.css (shortened under reduced motion) */
+const TURN_MS = 900;
+const TURN_MS_REDUCED = 450;
+
+/** Delay between leaves when several turn at once */
+const STAGGER_MS = 90;
+
+/** A turn in progress: leaves in [from, to) turn forward, or [to, from) turn back */
+interface Turn {
+  from: number;
+  to: number;
+}
+
+/**
+ * Leaves that are turning ride above everything until they land, like the Book's pages
+ * never change z-index mid-flip. At rest, unturned leaves stack first-on-top and turned
+ * leaves stack most-recent-on-top.
+ */
+function leafLayer(i: number, current: number, count: number, turn: Turn | null) {
+  if (turn) {
+    const forward = turn.to > turn.from;
+    const lo = Math.min(turn.from, turn.to);
+    const hi = Math.max(turn.from, turn.to);
+    if (i >= lo && i < hi) {
+      return forward
+        ? { zIndex: 1000 + count - i, transitionDelay: `${(i - turn.from) * STAGGER_MS}ms` }
+        : { zIndex: 1000 + i, transitionDelay: `${(turn.from - 1 - i) * STAGGER_MS}ms` };
+    }
+  }
+  return { zIndex: i < current ? i + 1 : count - i + 10, transitionDelay: "0ms" };
+}
 
 interface Leaf {
   faceKey: number;
@@ -44,12 +75,34 @@ function PageTurn(props: { faces: FaceSpec[] }) {
   );
 
   const [current, setCurrent] = useState(0);
+  const [turn, setTurn] = useState<Turn | null>(null);
   const [hintSeen, setHintSeen] = useState(false);
 
+  /** Synchronous mirrors of `current` and the turn lock, so rapid input can't race renders */
+  const currentRef = useRef(0);
+  const turningRef = useRef(false);
+  const settleTimer = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => () => clearTimeout(settleTimer.current), []);
+
+  /** Turn to leaf `index`. Ignored while a turn is in progress, like the Book's animation lock */
   const go = useCallback(
     (index: number) => {
-      setCurrent(Math.max(0, Math.min(leaves.length - 1, index)));
+      const to = Math.max(0, Math.min(leaves.length - 1, index));
+      const from = currentRef.current;
+      if (turningRef.current || to === from) return;
+
+      turningRef.current = true;
+      currentRef.current = to;
+      setTurn({ from, to });
+      setCurrent(to);
       setHintSeen(true);
+
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const duration = (reduce ? TURN_MS_REDUCED : TURN_MS) + (Math.abs(to - from) - 1) * STAGGER_MS;
+      settleTimer.current = setTimeout(() => {
+        turningRef.current = false;
+        setTurn(null);
+      }, duration + 50);
     },
     [leaves.length]
   );
@@ -69,14 +122,14 @@ function PageTurn(props: { faces: FaceSpec[] }) {
   useEffect(() => {
     if (!active) return;
     const target = leafForHash();
-    if (target >= 0) setCurrent(target);
+    if (target >= 0) go(target);
     const handleHashChange = () => {
       const next = leafForHash();
-      if (next >= 0) setCurrent(next);
+      if (next >= 0) go(next);
     };
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
-  }, [active, leafForHash]);
+  }, [active, go, leafForHash]);
 
   /** Keep the URL hash pointing at the open face; the first face is the bare URL */
   useEffect(() => {
@@ -91,12 +144,12 @@ function PageTurn(props: { faces: FaceSpec[] }) {
   useEffect(() => {
     if (!active) return;
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "ArrowRight") go(current + 1);
-      else if (event.key === "ArrowLeft") go(current - 1);
+      if (event.key === "ArrowRight") go(currentRef.current + 1);
+      else if (event.key === "ArrowLeft") go(currentRef.current - 1);
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [active, current, go]);
+  }, [active, go]);
 
   /** Swipes and taps */
   const start = useRef<{ x: number; y: number } | null>(null);
@@ -110,10 +163,10 @@ function PageTurn(props: { faces: FaceSpec[] }) {
     const dx = event.clientX - from.x;
     const dy = event.clientY - from.y;
     if (Math.abs(dx) >= SWIPE_THRESHOLD_PX && Math.abs(dx) > Math.abs(dy)) {
-      go(current + (dx < 0 ? 1 : -1));
+      go(currentRef.current + (dx < 0 ? 1 : -1));
     } else if (Math.abs(dx) < 8 && Math.abs(dy) < 8 && !(event.target as HTMLElement).closest("a")) {
       const rect = event.currentTarget.getBoundingClientRect();
-      go(current + ((event.clientX - rect.left) / rect.width > TAP_SPLIT ? 1 : -1));
+      go(currentRef.current + ((event.clientX - rect.left) / rect.width > TAP_SPLIT ? 1 : -1));
     }
   };
 
@@ -134,7 +187,7 @@ function PageTurn(props: { faces: FaceSpec[] }) {
                 <div
                   key={`${leaf.faceKey}-${leaf.slice}`}
                   className={`turn-leaf ${turned ? "turned" : ""}`}
-                  style={{ zIndex: turned ? i + 1 : leaves.length - i + 10 }}
+                  style={leafLayer(i, current, leaves.length, turn)}
                   aria-hidden={i !== current}
                 >
                   <div className="turn-front">
