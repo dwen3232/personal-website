@@ -1,0 +1,68 @@
+export const metadata = {
+  title: "Hello, world",
+  date: "2026-10-15",
+  summary: "Placeholder post that exercises every element the blog supports. Replace or delete before publishing.",
+  draft: true,
+  tags: ["meta", "mdx"],
+}
+
+import LineIcon from "@/components/Scrapbook/LineIcon"
+
+This is a **placeholder** post. It exists to show how each piece of a post renders: text, *emphasis*, [links](/), `inline code`, and the components available inside posts.
+
+## Headings and lists
+
+Second-level headings get the notebook's lettering and a rule. Lists use the same branch marks as the home page:
+
+- machine learning
+- backend systems
+- math
+
+Ordered lists keep their numbers:
+
+1. Write the post in MDX
+2. Commit it
+3. CI builds and deploys
+
+### A smaller heading
+
+> Block quotes read like a note written in the margin.
+
+#### A label heading
+
+---
+
+## Code
+
+```ts title="route.ts"
+// Highlighted at build time by Shiki; no JavaScript ships for it
+export function pageForFace(k: number): number {
+  return Math.ceil(k / 2);
+}
+```
+
+## Images
+
+Markdown images become taped prints. The quoted text after the path is the caption:
+
+![The sea from the shore](/sea-shore-photo.jpg "somewhere on the coast")
+
+## Components
+
+<Callout title="A note">
+  Callouts are taped cards for asides that shouldn't interrupt the main text.
+</Callout>
+
+Stamps mark something inline: <Stamp>shipped</Stamp>
+
+<RouteDraw stops={["idea", "prototype", "launch"]} />
+
+Any site component works too:
+
+<LineIcon name="knight" className="h-[48px] w-[40px] text-rust" />
+
+| Piece     | Where it lives               |
+| --------- | ---------------------------- |
+| Posts     | `src/content/posts/*.mdx`    |
+| Styles    | `.post` in `globals.css`     |
+| Components | `src/components/blog/`      |

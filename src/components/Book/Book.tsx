@@ -2,16 +2,29 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { BookStateContext } from "./context";
+import {
+  FaceVisibilityContext,
+  currentHashSlug,
+  faceIndexForSlug,
+  replaceHashSlug,
+  useActiveShell,
+  type FaceSpec,
+} from "../Shell";
 import Page from "./Page";
 import { FLIP_DURATION_MS } from "./constants";
 
 /** Minimum horizontal drag distance, in px, before a touch gesture counts as a swipe */
 const SWIPE_THRESHOLD_PX = 50;
 
+/** The page that shows face `k`: front faces sit on the right of page k/2, back faces on the left of the next one */
+const pageForFace = (k: number) => Math.ceil(k / 2);
+
 function Book(props: {
   /** Faces to be displayed within each Book's Page, each Page displays two faces */
-  faces: React.ReactNode[];
+  faces: FaceSpec[];
 }) {
+  /** Both shells are in the DOM; only the visible one listens for input and auto-flips */
+  const active = useActiveShell() === "book";
   const numFaces: number = props.faces.length;
   const numPages: number = numFaces / 2;
 
@@ -74,16 +87,46 @@ function Book(props: {
     [faceVisiblityFlags]
   );
 
-  /** Immediately flip to Page 1 */
+  /** Page for the face named in the URL hash, or null */
+  const pageForHash = useCallback(() => {
+    const k = faceIndexForSlug(props.faces, currentHashSlug());
+    return k < 0 ? null : pageForFace(k);
+  }, [props.faces]);
+
+  /** Flip open as soon as the book is on screen: to the face in the URL hash, else Page 1 */
   useEffect(() => {
+    if (!active) return;
     console.log("Triggered initial page flip");
-    setCurrentPage((currentPage) =>
-      currentPage === 0 ? currentPage + 1 : currentPage
-    );
-  }, [setCurrentPage]);
+    const target = Math.max(1, pageForHash() ?? 1);
+    setCurrentPage((currentPage) => (currentPage === 0 ? target : currentPage));
+  }, [active, pageForHash, setCurrentPage]);
+
+  /** Follow in-page links and back/forward to a different face */
+  useEffect(() => {
+    if (!active) return;
+    const handleHashChange = () => {
+      const target = pageForHash();
+      if (target === null || target === currentPage || animationLock) return;
+      setAnimationLock(true);
+      setCurrentPage(target);
+    };
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, [active, animationLock, currentPage, pageForHash]);
+
+  /** Keep the URL hash pointing at the open spread; the first spread is the bare URL */
+  useEffect(() => {
+    if (!active || currentPage === 0) return;
+    const onScreen = [props.faces[2 * currentPage - 1], props.faces[2 * currentPage]];
+    const hashSlug = currentHashSlug();
+    if (hashSlug && onScreen.some((face) => face?.slug === hashSlug)) return;
+    const slug = currentPage === 1 ? null : onScreen.find((face) => face?.slug)?.slug ?? null;
+    replaceHashSlug(slug);
+  }, [active, currentPage, props.faces]);
 
   /** Arrow-key navigation */
   useEffect(() => {
+    if (!active) return;
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowLeft") {
         decrementPage();
@@ -93,7 +136,7 @@ function Book(props: {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [incrementPage, decrementPage]);
+  }, [active, incrementPage, decrementPage]);
 
   /** Swipe navigation */
   const touchStartXRef = useRef<number | null>(null);
@@ -121,7 +164,7 @@ function Book(props: {
   return (
     // TODO: find the best way to size this
     <div
-      className="z-10 m-auto aspect-[99/70] w-[95vmin] rounded-lg bg-blue-400 p-3 shadow-2xl"
+      className="book-cover z-10 m-auto aspect-[99/70] w-[min(94vw,127vh)] rounded-[1.2%/1.7%] p-[1.8%]"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
@@ -137,21 +180,29 @@ function Book(props: {
             animationLock,
             incrementPage,
             decrementPage,
-            isFaceVisible,
           }}
         >
-          {Array.from(Array(numPages).keys()).map((n, _) => (
-            <Page
-              key={n}
-              num={n}
-              front={props.faces[2 * n]}
-              back={n + 1 < numFaces && props.faces[2 * n + 1]}
-              releasePageTransitionLock={releasePageTransitionLock}
-              updateVisibilityFlags={updateVisibilityFlags}
-            />
-          ))}
+          <FaceVisibilityContext.Provider value={{ isFaceVisible }}>
+            {Array.from(Array(numPages).keys()).map((n, _) => {
+              const front = props.faces[2 * n];
+              const back = props.faces[2 * n + 1];
+              return (
+                <Page
+                  key={n}
+                  num={n}
+                  front={front.node}
+                  back={back?.node}
+                  frontArrow={!front.filler}
+                  backArrow={!!back && !back.filler && !front.filler}
+                  releasePageTransitionLock={releasePageTransitionLock}
+                  updateVisibilityFlags={updateVisibilityFlags}
+                />
+              );
+            })}
+          </FaceVisibilityContext.Provider>
         </BookStateContext.Provider>
       </div>
+      <div aria-hidden="true" className="book-ribbon absolute bottom-[-5%] left-[49.4%] z-[-1] h-[10%] w-[1.4%]" />
     </div>
   );
 }

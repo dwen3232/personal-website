@@ -1,6 +1,6 @@
 # Blog plan
 
-Status: accepted, 2026-10-15. Not started.
+Status: built, 2026-10-16. Remaining before it goes live: `terraform apply` for the CloudFront rewrite (Phase 3), and a first published post.
 
 ## Goal
 
@@ -32,10 +32,12 @@ There's no runtime server cost: `output: "export"` produces static files. The co
 ## Content model
 
 ```
-content/
-  posts/
-    my-first-post.mdx
 src/
+  content/
+    posts/
+      my-first-post.mdx   # under src/ so the @/ alias reaches it
+  lib/
+    posts.ts              # getPosts(): metadata of every visible post, newest first
   app/
     blog/
       page.tsx            # index: list of posts
@@ -76,7 +78,11 @@ Some text, then a live demo:
 5. Add `src/app/blog/page.tsx`, listing posts newest first and hiding drafts in production builds.
 6. Add a helper that reads `content/posts`, imports each post's `metadata` and sorts the list. It runs at build time only.
 
-Done when `npm run build` emits `out/blog/index.html` and one HTML file per post.
+Done when `npm run build` emits `out/blog.html` and one HTML file per post. *Done.* Notes:
+
+- Drafts show in `next dev` and in builds run with `SHOW_DRAFTS=1`; production builds hide them.
+- `output: "export"` rejects a dynamic route with no params, so with zero published posts `generateStaticParams` returns a single `_` slug that renders the 404 page.
+- Tailwind scans `src/content/**/*.{md,mdx}` so classes used inside posts are generated.
 
 ### Phase 2: Styling
 
@@ -86,47 +92,39 @@ Done when `npm run build` emits `out/blog/index.html` and one HTML file per post
 4. Add syntax highlighting with `rehype-pretty-code`, or Shiki at build time.
 5. Respect `prefers-reduced-motion` in every animated component.
 
+*Done.* Notes:
+
+- `src/app/blog/layout.tsx` puts every blog page on one long sheet of the notebook paper (`.flow-sheet`, height follows the text) inside the leather cover, under `ScrollTopBar` (extracted from `ScrollSheet`), whose pin tracks reading progress. Posts scroll at every width; the book flip stays on the home page.
+- Body text is Libron; headings use Amatic SC and Kalam; links are rust-underlined; `---` becomes a dashed route with a pin. Typography for plain elements is `.post` in `globals.css`.
+- Components available in posts without an import (`src/mdx-components.tsx`): `Photo` (markdown images become taped prints keeping the photo's shape; `![alt](/img.jpg "caption")`), `Callout`, `Stamp`, `RouteDraw` (draws when scrolled into view).
+- Code is highlighted at build time by `rehype-pretty-code` + Shiki (`github-light`), shown as a taped card. `remark-gfm` adds tables, strikethrough, task lists and autolinks.
+- The index (`/blog`, titled "Field notes") lists posts as stops on a dashed route.
+
 ### Phase 3: Infra
 
-**Required: URI rewrite.** A static export writes `/blog/[slug]` as `out/blog/<slug>.html` ([Next.js static exports][next-export]). The distribution only maps `/` to `index.html` through `default_root_object`, so `/blog/my-post` currently reaches S3 unchanged and fails with a 403 or 404. Add a viewer-request CloudFront Function ([AWS sample][aws-sample]):
+**Required: URI rewrite.** A static export writes `/blog/[slug]` as `out/blog/<slug>.html` ([Next.js static exports][next-export]). The distribution only maps `/` to `index.html` through `default_root_object`, so without a rewrite `/blog/my-post` reaches S3 unchanged and fails. *Written, not yet applied:*
 
-```hcl
-resource "aws_cloudfront_function" "rewrite" {
-  name    = "portfolio-uri-rewrite"
-  runtime = "cloudfront-js-2.0"
-  publish = true
-  code    = <<-EOT
-    function handler(event) {
-      var req = event.request;
-      var uri = req.uri;
-      if (uri !== "/" && !uri.split("/").pop().includes(".")) {
-        req.uri = uri + ".html";
-      }
-      return req;
-    }
-  EOT
-}
+- `infra/functions/uri-rewrite.js`: a viewer-request CloudFront Function (`cloudfront-js-2.0`) that appends `.html` to any path whose last segment has no extension, drops a stray trailing slash first (`/blog/` → `/blog.html`), and leaves `/` for `default_root_object` ([AWS sample][aws-sample]).
+- `infra/cdn.tf`: `aws_cloudfront_function.uri_rewrite` loads that file with `file()` and is associated with the default cache behavior.
+- Trailing slashes stay off (`trailingSlash` unset), so `/blog` → `blog.html` and `/blog/<slug>` → `blog/<slug>.html`.
 
-# in aws_cloudfront_distribution.next-bundle -> default_cache_behavior
-function_association {
-  event_type   = "viewer-request"
-  function_arn = aws_cloudfront_function.rewrite.arn
-}
-```
-
-Trailing slashes stay off (`trailingSlash` unset), so the index exports as `out/blog.html` and posts as `out/blog/<slug>.html`, and the rule above covers both. `/` is still served by `default_root_object`. After `terraform apply`, test `/`, `/blog` and `/blog/<slug>`.
+To apply: `cd infra && terraform plan && terraform apply`. Apply before deploying the blog: the rewrite is harmless for the current site, whose only page is `/`. Then check `/`, `/blog` and a post URL on the live site.
 
 **Geo restriction: unchanged.** `infra/cdn.tf` keeps allowing viewers in the US only. This is intentional.
 
-**Optional: 404 page.** Add a `custom_error_response` mapping 403 and 404 to `/404.html`, which Next.js already exports.
+**404 page.** *Written, not yet applied:* `custom_error_response` blocks map S3's 403 (CloudFront can't list the bucket, so missing objects come back as 403) and 404 to the export's `/404.html`, returned with status 404.
 
-**No CI changes.** The existing workflow already builds, syncs `out/` to S3 and invalidates `/*`.
+**No CI changes required.** The workflow already builds, syncs `out/` to S3 and invalidates `/*`. Note that `aws s3 sync` without `--delete` leaves removed files in the bucket.
 
-### Phase 4 (optional): Extras
+### Phase 4: Extras
 
-- RSS: `src/app/rss.xml/route.ts` with `export const dynamic = "force-static"` builds to a static file ([Next.js static exports][next-export]).
-- `sitemap.xml` and Open Graph images, generated at build time.
-- Reading time and tags in each post's `metadata`.
+*Done.*
+
+- **RSS:** `src/app/rss.xml/route.ts` (`dynamic = "force-static"`) builds `out/rss.xml` from visible posts, with tags as categories. Every page advertises it with `<link rel="alternate">`; the index links it.
+- **Sitemap and robots:** `src/app/sitemap.ts` and `src/app/robots.ts` build `sitemap.xml` and `robots.txt`.
+- **Social cards:** build-time PNGs in the notebook style (`src/lib/og.tsx`, rendered by `next/og`), at `/og.png`, `/blog/og.png` and `/blog/<slug>/og.png`. They are route handlers named `og.png` rather than `opengraph-image.tsx`, because the file convention exports an extensionless file that the CloudFront `.html` rewrite and S3's content-type detection would both mishandle. Satori needs TTF, so `src/app/fonts/` also holds TTF copies of Libron and Amatic SC (both OFL), used only at build time.
+- **Reading time and tags:** `getPosts()` estimates reading time from the post's prose at 230 words per minute; posts may set `tags` in `metadata`. Both show on the post and the index. There are no per-tag pages yet.
+- `SITE_URL` in `src/lib/site.ts` is the canonical origin (`https://davidrwen.com`) for absolute URLs.
 
 ## Decisions
 

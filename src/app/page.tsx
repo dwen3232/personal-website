@@ -1,26 +1,33 @@
 import Book from "@/components/Book/Book";
+import PageTurn from "@/components/PageTurn";
 import WoodBackground from "@/components/WoodBackground";
+import type { FaceSpec } from "@/components/Shell";
 
 import WelcomePage from "@/components/Pages/WelcomePage";
 import AboutMePage from "@/components/Pages/AboutMePage";
 import EmptyPage from "@/components/Pages/EmptyPage";
-import SkillsPage from "@/components/Pages/SkillsPage";
 import UnderConstructionPage from "@/components/Pages/UnderConstructionPage";
+
+/** Every face, in reading order. Both shells render from this one list. */
+const FACES: FaceSpec[] = [
+  { node: <EmptyPage faceKey={0} />, filler: true },
+  { node: <WelcomePage faceKey={1} />, slug: "hello", tallPages: 2 },
+  { node: <AboutMePage faceKey={2} />, slug: "about" },
+  { node: <UnderConstructionPage />, bookOnly: true },
+  { node: <UnderConstructionPage />, bookOnly: true },
+  { node: <UnderConstructionPage />, bookOnly: true },
+];
 
 export default function Home() {
   return (
-    <main className="flex h-screen w-screen font-mono">
+    <main className="relative font-mono">
       <WoodBackground />
-      <Book
-        faces={[
-          <EmptyPage key={0} faceKey={0} />,
-          <WelcomePage key={1} faceKey={1} />,
-          <AboutMePage key={2} faceKey={2} />,
-          <UnderConstructionPage flipDirection="left" key={3} />,
-          <UnderConstructionPage flipDirection="right" key={4} />,
-          <UnderConstructionPage flipDirection="left" key={5} />,
-        ]}
-      />
+      <div className="shell-book h-screen w-screen">
+        <Book faces={FACES} />
+      </div>
+      <div className="shell-turn">
+        <PageTurn faces={FACES} />
+      </div>
     </main>
   );
 }

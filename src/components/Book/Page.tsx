@@ -2,11 +2,16 @@ import { CSSTransition } from "react-transition-group";
 import { useBookContext } from "./hooks";
 import { useRef } from "react";
 import { FLIP_DURATION_MS } from "./constants";
+import FlipPageButton from "./FlipPageButton";
 
 function Page(props: {
   num: number;
   front: React.ReactNode;
   back: React.ReactNode;
+  /** Show a "next" arrow on the front (right-hand) face */
+  frontArrow: boolean;
+  /** Show a "previous" arrow on the back (left-hand) face */
+  backArrow: boolean;
   releasePageTransitionLock(): void;
   updateVisibilityFlags(): void;
 }) {
@@ -39,6 +44,7 @@ function Page(props: {
           style={{ zIndex: numFaces - props.num }}
         >
           {props.front}
+          {props.frontArrow && <FlipPageButton flipDirection="right" />}
         </div>
       </CSSTransition>
       <CSSTransition
@@ -57,6 +63,7 @@ function Page(props: {
           style={{ zIndex: props.num }}
         >
           {props.back}
+          {props.backArrow && <FlipPageButton flipDirection="left" />}
         </div>
       </CSSTransition>
     </>
