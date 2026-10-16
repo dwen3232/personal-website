@@ -35,7 +35,7 @@ function AboutMePage(props: { faceKey: number }) {
       <Polaroid
         src="/sea-shore-photo.jpg"
         alt="The sea from the shore"
-        className="left-[67%] top-[20%] h-[30%] w-[25%] -rotate-[2.5deg] tall:left-[8%] tall:top-[28%] tall:h-[24%] tall:w-[46%]"
+        className="left-[67%] top-[20%] w-[25%] -rotate-[2.5deg] tall:left-[8%] tall:top-[28%] tall:w-[46%]"
       />
       <Tape className="left-[72%] top-[18%] w-[12%] rotate-6 tall:left-[18%] tall:top-[26.5%] tall:w-[22%]" />
 

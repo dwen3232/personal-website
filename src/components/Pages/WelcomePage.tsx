@@ -38,7 +38,7 @@ function WelcomePage(props: { faceKey: number }) {
         src="/headshot-photo.jpg"
         alt="David Wen"
         focus="center 30%"
-        className="left-[64%] top-[18%] h-[27%] w-[27%] rotate-3 tall:left-[38%] tall:top-[12%] tall:h-[16.5%] tall:w-[52%]"
+        className="left-[64%] top-[18%] w-[27%] rotate-3 tall:left-[38%] tall:top-[12%] tall:w-[52%]"
       />
       <Tape className="left-[70%] top-[16%] w-[12%] -rotate-[5deg] tall:left-[52%] tall:top-[11.2%] tall:w-[24%]" />
 
@@ -50,7 +50,7 @@ function WelcomePage(props: { faceKey: number }) {
       <Polaroid
         src="/atlanta-skyline-photo.jpg"
         alt="Atlanta skyline"
-        className="left-[8%] top-[44%] h-[22%] w-[24%] -rotate-3 tall:left-[50%] tall:top-[69%] tall:h-[11%] tall:w-[42%]"
+        className="left-[8%] top-[44%] w-[24%] -rotate-3 tall:left-[50%] tall:top-[69%] tall:w-[42%]"
       />
       <Tape className="left-[13%] top-[42%] w-[11%] rotate-3 tall:left-[60%] tall:top-[68.2%] tall:w-[20%]" />
 

@@ -198,9 +198,10 @@
 }
 
 .polaroid {
-  /* Flat, smooth white like real instant-film stock; a hairline edge keeps it off the cream paper */
-  background: #fbfaf6;
-  outline: 1px solid rgba(42, 38, 34, 0.1);
+  /* Instant-film frame grey, sampled from real prints (#e1e6eb to #f6f8f3, mostly #eaebed).
+     Smooth, no grain or drop shadow; a faint sheen top to bottom like the scans show. */
+  background: linear-gradient(172deg, #eff0f0, #e8eaeb 55%, #e4e6e8);
+  outline: 1px solid rgba(42, 38, 34, 0.08);
   outline-offset: -1px;
 }
 
