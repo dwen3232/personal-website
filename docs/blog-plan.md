@@ -102,39 +102,19 @@ Done when `npm run build` emits `out/blog.html` and one HTML file per post. *Don
 
 ### Phase 3: Infra
 
-**Required: URI rewrite.** A static export writes `/blog/[slug]` as `out/blog/<slug>.html` ([Next.js static exports][next-export]). The distribution only maps `/` to `index.html` through `default_root_object`, so `/blog/my-post` currently reaches S3 unchanged and fails with a 403 or 404. Add a viewer-request CloudFront Function ([AWS sample][aws-sample]):
+**Required: URI rewrite.** A static export writes `/blog/[slug]` as `out/blog/<slug>.html` ([Next.js static exports][next-export]). The distribution only maps `/` to `index.html` through `default_root_object`, so without a rewrite `/blog/my-post` reaches S3 unchanged and fails. *Written, not yet applied:*
 
-```hcl
-resource "aws_cloudfront_function" "rewrite" {
-  name    = "portfolio-uri-rewrite"
-  runtime = "cloudfront-js-2.0"
-  publish = true
-  code    = <<-EOT
-    function handler(event) {
-      var req = event.request;
-      var uri = req.uri;
-      if (uri !== "/" && !uri.split("/").pop().includes(".")) {
-        req.uri = uri + ".html";
-      }
-      return req;
-    }
-  EOT
-}
+- `infra/functions/uri-rewrite.js`: a viewer-request CloudFront Function (`cloudfront-js-2.0`) that appends `.html` to any path whose last segment has no extension, drops a stray trailing slash first (`/blog/` → `/blog.html`), and leaves `/` for `default_root_object` ([AWS sample][aws-sample]).
+- `infra/cdn.tf`: `aws_cloudfront_function.uri_rewrite` loads that file with `file()` and is associated with the default cache behavior.
+- Trailing slashes stay off (`trailingSlash` unset), so `/blog` → `blog.html` and `/blog/<slug>` → `blog/<slug>.html`.
 
-# in aws_cloudfront_distribution.next-bundle -> default_cache_behavior
-function_association {
-  event_type   = "viewer-request"
-  function_arn = aws_cloudfront_function.rewrite.arn
-}
-```
-
-Trailing slashes stay off (`trailingSlash` unset), so the index exports as `out/blog.html` and posts as `out/blog/<slug>.html`, and the rule above covers both. `/` is still served by `default_root_object`. After `terraform apply`, test `/`, `/blog` and `/blog/<slug>`.
+To apply: `cd infra && terraform plan && terraform apply`. Apply before deploying the blog: the rewrite is harmless for the current site, whose only page is `/`. Then check `/`, `/blog` and a post URL on the live site.
 
 **Geo restriction: unchanged.** `infra/cdn.tf` keeps allowing viewers in the US only. This is intentional.
 
-**Optional: 404 page.** Add a `custom_error_response` mapping 403 and 404 to `/404.html`, which Next.js already exports.
+**404 page.** *Written, not yet applied:* `custom_error_response` blocks map S3's 403 (CloudFront can't list the bucket, so missing objects come back as 403) and 404 to the export's `/404.html`, returned with status 404.
 
-**No CI changes.** The existing workflow already builds, syncs `out/` to S3 and invalidates `/*`.
+**No CI changes required.** The workflow already builds, syncs `out/` to S3 and invalidates `/*`. Note that `aws s3 sync` without `--delete` leaves removed files in the bucket.
 
 ### Phase 4 (optional): Extras
 

@@ -40,6 +40,12 @@ terraform apply
 AWS credentials come from your local AWS CLI configuration (same account/profile used for
 `myinfra`, account `730335404092`).
 
+## CloudFront Function
+
+`functions/uri-rewrite.js` runs on every viewer request and appends `.html` to extensionless
+paths, so the Next.js static export's `/blog` and `/blog/<slug>` resolve to `blog.html` and
+`blog/<slug>.html`. `cdn.tf` loads it with `file()`, so the deployed code is exactly this file.
+
 ## Notes
 
 - `aws_route53_zone.portfolio_domain` is the authoritative DNS zone for `davidrwen.com` — never

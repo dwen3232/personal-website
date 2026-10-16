@@ -7,6 +7,15 @@ resource "aws_cloudfront_origin_access_control" "main" {
 }
 
 
+# Maps extensionless paths to the static export's .html files (/blog -> /blog.html)
+resource "aws_cloudfront_function" "uri_rewrite" {
+  name    = "portfolio-uri-rewrite"
+  runtime = "cloudfront-js-2.0"
+  comment = "Append .html to extensionless paths for the Next.js static export"
+  publish = true
+  code    = file("${path.module}/functions/uri-rewrite.js")
+}
+
 # TODO: configure logging
 resource "aws_cloudfront_distribution" "next-bundle" {
   enabled             = true
@@ -40,6 +49,27 @@ resource "aws_cloudfront_distribution" "next-bundle" {
         forward = "none"
       }
     }
+
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.uri_rewrite.arn
+    }
+  }
+
+  # Missing objects come back from S3 as 403 (CloudFront can't list the bucket) or 404;
+  # serve the export's 404 page for both
+  custom_error_response {
+    error_code            = 403
+    response_code         = 404
+    response_page_path    = "/404.html"
+    error_caching_min_ttl = 60
+  }
+
+  custom_error_response {
+    error_code            = 404
+    response_code         = 404
+    response_page_path    = "/404.html"
+    error_caching_min_ttl = 60
   }
 
   viewer_certificate {
