@@ -164,7 +164,7 @@ function Book(props: {
   return (
     // TODO: find the best way to size this
     <div
-      className="book-cover z-10 m-auto aspect-[99/70] w-[95vmin] rounded-[1.2%/1.7%] p-[1.8%]"
+      className="book-cover z-10 m-auto aspect-[99/70] w-[min(94vw,127vh)] rounded-[1.2%/1.7%] p-[1.8%]"
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
