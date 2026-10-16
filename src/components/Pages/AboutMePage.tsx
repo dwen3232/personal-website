@@ -27,7 +27,7 @@ function AboutMePage(props: { faceKey: number }) {
 
       <div className="absolute left-[10%] top-[23%] w-[52%] tall:left-[8%] tall:top-[12.5%] tall:w-[84%]">
         <Entry title="About me" className="tall:hidden" />
-        <p className="m-0 mt-[0.8cqw] text-[2.85cqw] leading-[1.6] tall:text-[4.4cqw]">
+        <p className="m-0 mt-[0.8cqw] font-read text-[2.85cqw] leading-[1.55] tall:text-[4.4cqw]">
           {"I'm a tech and math enthusiast who loves learning new things."}
         </p>
       </div>

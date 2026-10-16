@@ -19,6 +19,7 @@ module.exports = {
         title: ['var(--font-title)', '"Arial Narrow"', 'sans-serif'],
         hand: ['var(--font-hand)', '"Comic Sans MS"', 'cursive'],
         stamp: ['var(--font-stamp)', '"Courier New"', 'monospace'],
+        read: ['var(--font-read)', 'Georgia', 'serif'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

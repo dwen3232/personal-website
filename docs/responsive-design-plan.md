@@ -62,7 +62,7 @@ A static export can't detect devices on the server, and choosing the shell in Ja
 
 - **Primitives:** `Polaroid`, `Tape`, `Pin`, `Stamp`, `Entry`, `RouteSegment` and `LineIcon`. The blog uses the same set (see `blog-plan.md`, Phase 2).
 - **Tokens:** paper, dots, ink and rust as CSS variables mapped into Tailwind's theme. Generated textures (leather, crepe, grain) are CSS variables too.
-- **Fonts:** Amatic SC, Kalam and Courier Prime via `next/font`, downloaded at build time and served from the site itself.
+- **Fonts:** Amatic SC, Kalam and Courier Prime via `next/font`, downloaded at build time and served from the site itself. Libron (OFL, `src/app/fonts/libron/`) via `next/font/local` as `font-read`, for prose.
 
 ### 7. Deep links (later)
 
