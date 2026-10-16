@@ -203,7 +203,6 @@ function Book(props: {
         </BookStateContext.Provider>
       </div>
       <div aria-hidden="true" className="book-ribbon absolute bottom-[-5%] left-[49.4%] z-[-1] h-[10%] w-[1.4%]" />
-      <div aria-hidden="true" className="book-elastic absolute bottom-[-2.5%] right-[0.4%] top-[-2.5%] z-20 w-[1%] rounded-sm" />
     </div>
   );
 }

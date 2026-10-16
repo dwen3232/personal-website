@@ -204,7 +204,6 @@ function PageTurn(props: { faces: FaceSpec[] }) {
             })}
           </FaceVisibilityContext.Provider>
         </div>
-        <div aria-hidden="true" className="book-elastic absolute bottom-[-12px] right-[1px] top-[-12px] z-20 w-[8px] rounded-sm" />
       </div>
 
       <nav aria-label="Pages" className="absolute inset-x-0 bottom-[max(18px,env(safe-area-inset-bottom))] flex items-center justify-center gap-[8px]">

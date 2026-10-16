@@ -178,11 +178,6 @@
   pointer-events: none;
 }
 
-.book-elastic {
-  background: linear-gradient(90deg, #111, #383838 45%, #111);
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.35);
-}
-
 .book-ribbon {
   background: var(--tex-grain) 0 0 / 240px, var(--rust);
   background-blend-mode: multiply;
@@ -203,9 +198,10 @@
 }
 
 .polaroid {
-  background: var(--tex-grain) 0 0 / 240px, #fbfbf8;
-  background-blend-mode: multiply;
-  box-shadow: 0 0.12cqw 0.2cqw rgba(0, 0, 0, 0.22), 0 0.7cqw 1.4cqw rgba(0, 0, 0, 0.12), 0 2.6cqw 4cqw -1.6cqw rgba(0, 0, 0, 0.32);
+  /* Flat, smooth white like real instant-film stock; a hairline edge keeps it off the cream paper */
+  background: #fbfaf6;
+  outline: 1px solid rgba(42, 38, 34, 0.1);
+  outline-offset: -1px;
 }
 
 .map-pin {
@@ -239,9 +235,15 @@
   stroke-dashoffset: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
+.route-draw {
+  transition: stroke-dashoffset 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.35s;
+}
+
+/* Like the page turn, reduced motion shortens the draw rather than removing it */
+@media (prefers-reduced-motion: reduce) {
   .route-draw {
-    transition: stroke-dashoffset 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.35s;
+    transition-duration: 0.8s;
+    transition-delay: 0s;
   }
 }
 
