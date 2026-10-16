@@ -1,10 +1,18 @@
 import Link from "next/link";
+import PostMetaLine from "@/components/blog/PostMetaLine";
 import { formatPostDate } from "@/lib/dates";
+import { cardMetadata } from "@/lib/og";
 import { getPosts } from "@/lib/posts";
 
 export const metadata = {
-  title: "Blog · David Wen",
+  title: "Field notes · David Wen",
   description: "Notes on machine learning, backend engineering and math.",
+  ...cardMetadata({
+    image: "/blog/og.png",
+    alt: "Field notes by David Wen",
+    title: "Field notes",
+    description: "Notes on machine learning, backend engineering and math.",
+  }),
 };
 
 export default async function BlogIndex() {
@@ -14,7 +22,12 @@ export default async function BlogIndex() {
     <>
       <h1 className="m-0 font-title text-[clamp(48px,10cqw,76px)] font-bold leading-none tracking-[0.05em]">Field notes</h1>
       <div className="mt-[6px] h-[2px] w-[min(60%,320px)] rounded bg-ink" />
-      <p className="m-0 mt-[14px] font-hand text-[19px]">Things I&apos;m building and learning, written down along the way.</p>
+      <p className="m-0 mt-[14px] font-hand text-[19px]">
+        Things I&apos;m building and learning, written down along the way.{" "}
+        <a href="/rss.xml" className="text-rust underline decoration-2 underline-offset-4">
+          rss
+        </a>
+      </p>
 
       {posts.length === 0 ? (
         <p className="m-0 mt-[40px] font-hand text-[19px] text-rust">First stop coming soon.</p>
@@ -35,6 +48,7 @@ export default async function BlogIndex() {
                 {post.title}
               </Link>
               <p className="m-0 mt-[6px] font-read text-[18px] leading-[1.6]">{post.summary}</p>
+              <PostMetaLine className="mt-[6px]" readingMinutes={post.readingMinutes} tags={post.tags} />
             </li>
           ))}
         </ol>

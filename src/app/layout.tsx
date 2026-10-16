@@ -1,6 +1,9 @@
 import './globals.css'
 import { Amatic_SC, Courier_Prime, Inter, Kalam } from 'next/font/google'
 import localFont from 'next/font/local'
+import type { Metadata } from 'next'
+import { SITE_NAME, SITE_URL } from '@/lib/site'
+import { cardMetadata } from '@/lib/og'
 
 const inter = Inter({ subsets: ['latin'] })
 const title = Amatic_SC({ subsets: ['latin'], weight: '700', variable: '--font-title' })
@@ -18,9 +21,17 @@ const read = localFont({
   variable: '--font-read',
 })
 
-export const metadata = {
-  title: 'David Wen',
-  description: 'Personal Website',
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: SITE_NAME,
+  description: 'Machine learning engineer, backend developer, math nerd.',
+  ...cardMetadata({
+    image: '/og.png',
+    alt: 'David Wen: machine learning engineer, backend developer, math nerd',
+    title: SITE_NAME,
+    description: 'Machine learning engineer, backend developer, math nerd.',
+  }),
+  alternates: { types: { 'application/rss+xml': [{ url: '/rss.xml', title: 'Field notes' }] } },
 }
 
 export default function RootLayout({

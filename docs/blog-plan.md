@@ -116,11 +116,15 @@ To apply: `cd infra && terraform plan && terraform apply`. Apply before deployin
 
 **No CI changes required.** The workflow already builds, syncs `out/` to S3 and invalidates `/*`. Note that `aws s3 sync` without `--delete` leaves removed files in the bucket.
 
-### Phase 4 (optional): Extras
+### Phase 4: Extras
 
-- RSS: `src/app/rss.xml/route.ts` with `export const dynamic = "force-static"` builds to a static file ([Next.js static exports][next-export]).
-- `sitemap.xml` and Open Graph images, generated at build time.
-- Reading time and tags in each post's `metadata`.
+*Done.*
+
+- **RSS:** `src/app/rss.xml/route.ts` (`dynamic = "force-static"`) builds `out/rss.xml` from visible posts, with tags as categories. Every page advertises it with `<link rel="alternate">`; the index links it.
+- **Sitemap and robots:** `src/app/sitemap.ts` and `src/app/robots.ts` build `sitemap.xml` and `robots.txt`.
+- **Social cards:** build-time PNGs in the notebook style (`src/lib/og.tsx`, rendered by `next/og`), at `/og.png`, `/blog/og.png` and `/blog/<slug>/og.png`. They are route handlers named `og.png` rather than `opengraph-image.tsx`, because the file convention exports an extensionless file that the CloudFront `.html` rewrite and S3's content-type detection would both mishandle. Satori needs TTF, so `src/app/fonts/` also holds TTF copies of Libron and Amatic SC (both OFL), used only at build time.
+- **Reading time and tags:** `getPosts()` estimates reading time from the post's prose at 230 words per minute; posts may set `tags` in `metadata`. Both show on the post and the index. There are no per-tag pages yet.
+- `SITE_URL` in `src/lib/site.ts` is the canonical origin (`https://davidrwen.com`) for absolute URLs.
 
 ## Decisions
 

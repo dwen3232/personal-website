@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import PostMetaLine from "@/components/blog/PostMetaLine";
 import PostStamp from "@/components/blog/PostStamp";
 import RouteRule from "@/components/blog/RouteRule";
 import { formatPostDate } from "@/lib/dates";
-import { getPosts, type PostMeta } from "@/lib/posts";
+import { cardMetadata } from "@/lib/og";
+import { getPost, getPosts, type PostMeta } from "@/lib/posts";
 
 /**
  * `output: "export"` rejects a dynamic route with no params, which is the state whenever
@@ -30,7 +32,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   if (slug === NO_POSTS_SLUG) return {};
   const { metadata } = await loadPost(slug);
-  return { title: `${metadata.title} · David Wen`, description: metadata.summary };
+  const card = cardMetadata({
+    image: `/blog/${slug}/og.png`,
+    alt: metadata.title,
+    title: metadata.title,
+    description: metadata.summary,
+    type: "article",
+  });
+  return {
+    title: `${metadata.title} · David Wen`,
+    description: metadata.summary,
+    ...card,
+    openGraph: { ...card.openGraph, type: "article" as const, publishedTime: metadata.date, tags: metadata.tags },
+  };
 }
 
 const LINK_CLASS = "underline decoration-rust decoration-2 underline-offset-4 hover:text-rust";
@@ -38,7 +52,9 @@ const LINK_CLASS = "underline decoration-rust decoration-2 underline-offset-4 ho
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   if (slug === NO_POSTS_SLUG) notFound();
-  const { default: Post, metadata } = await loadPost(slug);
+  const { default: Post } = await loadPost(slug);
+  const metadata = await getPost(slug);
+  if (!metadata) notFound();
 
   return (
     <article>
@@ -51,6 +67,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           {metadata.title}
         </h1>
         <p className="m-0 mt-[14px] font-hand text-[20px] leading-[1.45]">{metadata.summary}</p>
+        <PostMetaLine className="mt-[12px]" readingMinutes={metadata.readingMinutes} tags={metadata.tags} />
       </header>
       <RouteRule />
       <div className="post">
