@@ -1,6 +1,6 @@
 # Blog plan
 
-Status: proposed, 2026-10-15
+Status: accepted, 2026-10-15. Not started.
 
 ## Goal
 
@@ -22,7 +22,7 @@ MDX is Markdown that can import and render React components inline, so a post ca
 | Option | Why not now |
 | --- | --- |
 | Hosted headless CMS (Sanity, Contentful) | Rich text is stored as structured blocks. Each custom animation needs a CMS block type plus a renderer, and every publish needs a webhook-triggered rebuild. Worth it only for non-technical authors. |
-| Git-based CMS with a visual editor (Keystatic) | Good fit for content, but its Next.js admin needs an API route and a Node server ([Keystatic Next.js install][keystatic-next]), which a static export doesn't have. Can be added later in local mode only (see Phase 4). |
+| Git-based CMS with a visual editor (Keystatic) | Good fit for content, but its Next.js admin needs an API route and a Node server ([Keystatic Next.js install][keystatic-next]), which a static export doesn't have. Not planned: writing MDX in an editor is enough. |
 | Move to Astro | Better fit for content sites in principle: no JavaScript shipped by default, built-in content collections with MDX, and React components as islands. The company behind Astro joined Cloudflare in January 2026, and the framework stays MIT-licensed ([Astro][astro-cf]). Not worth the migration while the home page is one large React client component (page flip, GSAP, rough-notation). Revisit if the blog becomes the main part of the site. |
 
 ### Is Next.js too much?
@@ -99,9 +99,7 @@ resource "aws_cloudfront_function" "rewrite" {
     function handler(event) {
       var req = event.request;
       var uri = req.uri;
-      if (uri.endsWith("/")) {
-        req.uri = uri + "index.html";
-      } else if (!uri.split("/").pop().includes(".")) {
+      if (uri !== "/" && !uri.split("/").pop().includes(".")) {
         req.uri = uri + ".html";
       }
       return req;
@@ -116,42 +114,38 @@ function_association {
 }
 ```
 
-With `trailingSlash: true` the export writes `blog/<slug>/index.html` instead. In that case, append `/index.html` rather than `.html`. Pick one approach and test both `/blog` and `/blog/<slug>` after `terraform apply`.
+Trailing slashes stay off (`trailingSlash` unset), so the index exports as `out/blog.html` and posts as `out/blog/<slug>.html`, and the rule above covers both. `/` is still served by `default_root_object`. After `terraform apply`, test `/`, `/blog` and `/blog/<slug>`.
 
-**Decide: geo restriction.** `infra/cdn.tf` allows viewers in the US only. That blocks every blog reader outside the US. Change it to `restriction_type = "none"` unless the restriction is intentional.
+**Geo restriction: unchanged.** `infra/cdn.tf` keeps allowing viewers in the US only. This is intentional.
 
 **Optional: 404 page.** Add a `custom_error_response` mapping 403 and 404 to `/404.html`, which Next.js already exports.
 
 **No CI changes.** The existing workflow already builds, syncs `out/` to S3 and invalidates `/*`.
 
-### Phase 4 (optional): Authoring UI
-
-Add Keystatic in **local mode**, served only by `next dev`, so posts can be edited in a browser and saved as MDX files in the repo. Disable its routes in production builds, using Keystatic's recipe for disabling admin routes in production, so the static export stays static. ([Keystatic intro][keystatic-intro])
-
-### Phase 5 (optional): Extras
+### Phase 4 (optional): Extras
 
 - RSS: `src/app/rss.xml/route.ts` with `export const dynamic = "force-static"` builds to a static file ([Next.js static exports][next-export]).
 - `sitemap.xml` and Open Graph images, generated at build time.
 - Reading time and tags in each post's `metadata`.
 
-## Open questions
+## Decisions
 
-- Should the geo restriction stay?
-- Trailing slashes or not? This affects the rewrite function and canonical URLs.
-- Is a visual editor (Phase 4) wanted at all, or is writing MDX in an editor enough?
+Recorded 2026-10-15:
+
+- **Geo restriction:** stays US-only.
+- **URLs:** no trailing slash. `/blog/<slug>` maps to `<slug>.html`.
+- **Authoring:** MDX written in an editor. No CMS or visual editor, so the earlier Keystatic phase is dropped.
 
 ## Sources
 
 - [Next.js: MDX guide][next-mdx]
 - [Next.js: Static exports][next-export]
 - [Keystatic: Next.js installation][keystatic-next]
-- [Keystatic: Introduction][keystatic-intro]
 - [AWS sample: CloudFront Functions URL rewrite][aws-sample]
 - [Astro: The Astro Technology Company joins Cloudflare][astro-cf]
 
 [next-mdx]: https://nextjs.org/docs/app/guides/mdx
 [next-export]: https://nextjs.org/docs/app/guides/static-exports
 [keystatic-next]: https://keystatic.com/docs/installation-next-js
-[keystatic-intro]: https://keystatic.com/docs/introduction
 [aws-sample]: https://github.com/aws-samples/amazon-cloudfront-functions/blob/main/url-rewrite-single-page-apps/README.md
 [astro-cf]: https://astro.build/blog/joining-cloudflare/
