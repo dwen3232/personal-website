@@ -2,12 +2,22 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { BookStateContext } from "./context";
-import { FaceVisibilityContext, useActiveShell, type FaceSpec } from "../Shell";
+import {
+  FaceVisibilityContext,
+  currentHashSlug,
+  faceIndexForSlug,
+  replaceHashSlug,
+  useActiveShell,
+  type FaceSpec,
+} from "../Shell";
 import Page from "./Page";
 import { FLIP_DURATION_MS } from "./constants";
 
 /** Minimum horizontal drag distance, in px, before a touch gesture counts as a swipe */
 const SWIPE_THRESHOLD_PX = 50;
+
+/** The page that shows face `k`: front faces sit on the right of page k/2, back faces on the left of the next one */
+const pageForFace = (k: number) => Math.ceil(k / 2);
 
 function Book(props: {
   /** Faces to be displayed within each Book's Page, each Page displays two faces */
@@ -77,14 +87,42 @@ function Book(props: {
     [faceVisiblityFlags]
   );
 
-  /** Flip to Page 1 as soon as the book is on screen */
+  /** Page for the face named in the URL hash, or null */
+  const pageForHash = useCallback(() => {
+    const k = faceIndexForSlug(props.faces, currentHashSlug());
+    return k < 0 ? null : pageForFace(k);
+  }, [props.faces]);
+
+  /** Flip open as soon as the book is on screen: to the face in the URL hash, else Page 1 */
   useEffect(() => {
     if (!active) return;
     console.log("Triggered initial page flip");
-    setCurrentPage((currentPage) =>
-      currentPage === 0 ? currentPage + 1 : currentPage
-    );
-  }, [active, setCurrentPage]);
+    const target = Math.max(1, pageForHash() ?? 1);
+    setCurrentPage((currentPage) => (currentPage === 0 ? target : currentPage));
+  }, [active, pageForHash, setCurrentPage]);
+
+  /** Follow in-page links and back/forward to a different face */
+  useEffect(() => {
+    if (!active) return;
+    const handleHashChange = () => {
+      const target = pageForHash();
+      if (target === null || target === currentPage || animationLock) return;
+      setAnimationLock(true);
+      setCurrentPage(target);
+    };
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, [active, animationLock, currentPage, pageForHash]);
+
+  /** Keep the URL hash pointing at the open spread; the first spread is the bare URL */
+  useEffect(() => {
+    if (!active || currentPage === 0) return;
+    const onScreen = [props.faces[2 * currentPage - 1], props.faces[2 * currentPage]];
+    const hashSlug = currentHashSlug();
+    if (hashSlug && onScreen.some((face) => face?.slug === hashSlug)) return;
+    const slug = currentPage === 1 ? null : onScreen.find((face) => face?.slug)?.slug ?? null;
+    replaceHashSlug(slug);
+  }, [active, currentPage, props.faces]);
 
   /** Arrow-key navigation */
   useEffect(() => {

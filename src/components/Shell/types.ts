@@ -7,6 +7,8 @@ export interface FaceSpec {
   filler?: boolean;
   /** Shown in the Book only, e.g. placeholder pages */
   bookOnly?: boolean;
+  /** Deep-link id: `#slug` opens the Book to this face and scrolls the ScrollSheet to it */
+  slug?: string;
   /** Width / height of this face's sheet in the ScrollSheet. Defaults to 0.5 */
   tallAspect?: number;
 }

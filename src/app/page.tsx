@@ -11,8 +11,8 @@ import UnderConstructionPage from "@/components/Pages/UnderConstructionPage";
 /** Every face, in reading order. Both shells render from this one list. */
 const FACES: FaceSpec[] = [
   { node: <EmptyPage faceKey={0} />, filler: true },
-  { node: <WelcomePage faceKey={1} />, tallAspect: 0.26 },
-  { node: <AboutMePage faceKey={2} />, tallAspect: 0.5 },
+  { node: <WelcomePage faceKey={1} />, slug: "hello", tallAspect: 0.26 },
+  { node: <AboutMePage faceKey={2} />, slug: "about", tallAspect: 0.5 },
   { node: <UnderConstructionPage />, bookOnly: true },
   { node: <UnderConstructionPage />, bookOnly: true },
   { node: <UnderConstructionPage />, bookOnly: true },

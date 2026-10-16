@@ -1,6 +1,6 @@
 # Responsive design plan
 
-Status: in progress, 2026-10-15
+Status: done, 2026-10-15
 
 ## Goal
 
@@ -76,7 +76,7 @@ Each step ends with `npm run build` (output served from `out/`) and a manual che
 2. **Visibility interface; arrows and fillers moved into the shell.** No visible change. *Done.*
 3. **Route Map faces.** Rebuild Welcome and About with the primitives and container units; new desk, cover and paper. *Done.*
 4. **`ScrollSheet`, CSS shell switching, per-face route drawing.** *Done.* Faces use Tailwind `tall:` / `spread:` variants (container queries on the page box, defined in `tailwind.config.js`). Placeholder faces are `bookOnly`.
-5. **Deep links.**
+5. **Deep links.** *Done.* Faces declare a `slug` in `FACES` (`#hello`, `#about`). The Book flips to that spread on load and on `hashchange`; the ScrollSheet uses the slug as the sheet's `id`. Both keep the hash in sync with what's on screen via `replaceState`, and the first spread or sheet is the bare URL.
 
 ## Risks
 

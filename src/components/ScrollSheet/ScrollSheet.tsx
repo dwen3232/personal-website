@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { FaceVisibilityContext, useActiveShell, type FaceSpec } from "../Shell";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FaceVisibilityContext, currentHashSlug, replaceHashSlug, useActiveShell, type FaceSpec } from "../Shell";
 
 /** Share of a sheet that must be on screen before it counts as visible */
 const VISIBLE_THRESHOLD = 0.2;
@@ -19,9 +19,13 @@ function ScrollSheet(props: { faces: FaceSpec[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState<Set<number>>(new Set());
 
-  const faces = props.faces
-    .map((face, faceKey) => ({ face, faceKey }))
-    .filter(({ face }) => !face.filler && !face.bookOnly);
+  const faces = useMemo(
+    () =>
+      props.faces
+        .map((face, faceKey) => ({ face, faceKey }))
+        .filter(({ face }) => !face.filler && !face.bookOnly),
+    [props.faces]
+  );
 
   const isFaceVisible = useCallback((faceKey: number) => visible.has(faceKey), [visible]);
 
@@ -55,12 +59,20 @@ function ScrollSheet(props: { faces: FaceSpec[] }) {
     const update = () => {
       frame = 0;
       const drawLine = window.innerHeight * DRAW_LINE;
-      sheetRefs.current.forEach((el) => {
+      let current = 0;
+      sheetRefs.current.forEach((el, i) => {
         if (!el) return;
         const rect = el.getBoundingClientRect();
         const progress = reduceMotion ? 1 : Math.min(1, Math.max(0, (drawLine - rect.top) / rect.height));
         el.style.setProperty("--route-progress", progress.toFixed(3));
+        if (rect.top <= drawLine) current = i;
       });
+
+      // Keep the URL hash pointing at the sheet being read; the first sheet is the bare URL
+      if (window.scrollY > 0) {
+        const slug = faces[current]?.face.slug ?? null;
+        if (currentHashSlug() !== slug) replaceHashSlug(current === 0 ? null : slug);
+      }
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const overall = max > 0 ? window.scrollY / max : 0;
       trackRef.current?.style.setProperty("--p", `${(overall * 100).toFixed(1)}%`);
@@ -77,7 +89,7 @@ function ScrollSheet(props: { faces: FaceSpec[] }) {
       window.removeEventListener("resize", schedule);
       cancelAnimationFrame(frame);
     };
-  }, [active]);
+  }, [active, faces]);
 
   return (
     // Sized in px: the root font-size is viewport-based (for the Book), so rem is tiny on phones
@@ -99,8 +111,9 @@ function ScrollSheet(props: { faces: FaceSpec[] }) {
                 ref={(el) => {
                   sheetRefs.current[i] = el;
                 }}
+                id={face.slug}
                 data-face-key={faceKey}
-                className="scroll-sheet"
+                className="scroll-sheet scroll-mt-[68px]"
                 style={{ aspectRatio: face.tallAspect ?? 0.5 }}
               >
                 {face.node}
